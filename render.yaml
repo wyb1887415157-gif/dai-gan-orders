@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: dai-gan-orders
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ADMIN_KEY
+        value: "1887415157"
+      - key: SMTP_USER
+        value: "3532368834@qq.com"
+      - key: SMTP_PASS
+        value: "nhukspkbrkrldaif"
+      - key: NOTIFY_EMAIL
+        value: "3532368834@qq.com"
+      - key: PHONE_KEY
+        value: "he-lin-dai-gan-phone-key-32b!"
