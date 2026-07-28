@@ -1,0 +1,17 @@
+{
+  "name": "dai-gan-server",
+  "version": "1.0.0",
+  "description": "代肝订单管理后端",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^8.0.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^9.0.3"
+  }
+}
