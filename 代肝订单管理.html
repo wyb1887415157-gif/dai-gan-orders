@@ -1602,6 +1602,11 @@ tbody tr:hover { background: #f8fcff; }
 
   init();
 
+  // 心跳保活：每 4 分钟悄悄 ping 一下，防止 Render 休眠
+  setInterval(() => {
+    fetch((apiBase || '') + '/api/health', { signal: AbortSignal.timeout(5000) }).catch(() => {});
+  }, 4 * 60 * 1000);
+
   window._showLightbox = window._showLightbox;
   window._deletePriceImg = window._deletePriceImg;
 })();
