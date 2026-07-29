@@ -571,7 +571,7 @@ app.post("/api/auth", (req, res) => {
 });
 
 // ==================== 前端静态文件 ====================
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, { etag: false, setHeaders: (res) => { res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); res.setHeader("Pragma", "no-cache"); res.setHeader("Expires", "0"); } }));
 
 // ==================== 404 ====================
 app.use((req, res) => {

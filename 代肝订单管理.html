@@ -398,6 +398,7 @@ tbody tr:hover { background: #f8fcff; }
     <h1>游戏代肝订单管理 <span class="mode-badge mode-offline" id="modeBadge">本地模式</span></h1>
     <p class="subtitle" id="subtitleText">图片价格表 · 文字价格表 · 自助下单 · 高效管理 ✨ <span style="color:#999;font-size:0.7rem;">[v3]</span></p>
     <p style="color:var(--primary-dark);font-weight:600;font-size:1rem;margin-top:6px;">🌸 欢迎来到代肝鹤临的点单网页，感谢各位板板们支持 🌸</p>
+    <p style="font-size:0.7rem;color:#aaa;" id="debugInfo"></p>
   </div>
 
   <!-- ===== Toolbar ===== -->
@@ -1573,6 +1574,9 @@ tbody tr:hover { background: #f8fcff; }
       $('#adminKeyArea').style.display = '';
       console.log('✅ API 模式 → ' + (apiBase || window.location.origin));
     }
+    // 调试信息
+    const d = $('#debugInfo');
+    if (d) d.textContent = `协议:${proto} | 主机:${host} | API模式:${apiMode} | base:${apiBase || '(同源)'}`;
 
     const savedKey = sessionStorage.getItem(ADMIN_SESSION);
     if (savedKey) adminKey = savedKey;
