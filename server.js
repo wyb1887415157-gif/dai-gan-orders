@@ -188,19 +188,24 @@ function createSQLiteBackend() {
 }
 
 async function initDB() {
-  // 如果用户显式设置了 DB_HOST，优先尝试 MySQL
+  // 生产环境（设置了 DB_HOST）：必须用 MySQL，失败则重试，绝不降级
   if (process.env.DB_HOST) {
-    try {
-      db = await createMySQLBackend();
-      dbType = "MySQL";
-      console.log(`✅ MySQL 已连接 → ${db.info}`);
-      return;
-    } catch (e) {
-      console.log(`⚠️  MySQL 连接失败 (${e.message})，降级到 SQLite`);
+    for (let retry = 0; retry < 10; retry++) {
+      try {
+        db = await createMySQLBackend();
+        dbType = "MySQL";
+        console.log(`✅ MySQL 已连接 → ${db.info}`);
+        return;
+      } catch (e) {
+        console.log(`⚠️  MySQL 连接失败 (${e.message})，${5 * (retry + 1)}秒后重试...`);
+        await new Promise(r => setTimeout(r, 5000));
+      }
     }
+    console.error("❌ MySQL 连接失败超过 10 次，退出");
+    process.exit(1);
   }
 
-  // 降级到 SQLite
+  // 本地开发：没有 DB_HOST 才用 SQLite
   db = createSQLiteBackend();
   dbType = "SQLite";
   console.log(`✅ SQLite 已就绪 → ${db.info}`);
