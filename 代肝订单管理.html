@@ -395,7 +395,7 @@ tbody tr:hover { background: #f8fcff; }
   <!-- ===== Header ===== -->
   <div class="header">
     <div class="icon-row">🌸⚔️🌸</div>
-    <h1>游戏代肝订单管理 <span class="mode-badge mode-offline" id="modeBadge">本地模式</span></h1>
+    <h1>游戏代肝订单管理 <span class="mode-badge" id="modeBadge">加载中...</span></h1>
     <p class="subtitle" id="subtitleText">图片价格表 · 文字价格表 · 自助下单 · 高效管理 ✨ <span style="color:#999;font-size:0.7rem;">[v3]</span></p>
     <p style="color:var(--primary-dark);font-weight:600;font-size:1rem;margin-top:6px;">🌸 欢迎来到代肝鹤临的点单网页，感谢各位板板们支持 🌸</p>
     <p style="font-size:0.7rem;color:#aaa;" id="debugInfo"></p>
@@ -1561,25 +1561,29 @@ tbody tr:hover { background: #f8fcff; }
   });
 
   // ==================== 初始化 ====================
+  // ⚡ 同步守卫：在 init 之前立即设好模式，手机浏览器 BFCache 也无法覆盖
+  (function() {
+    const isFile = window.location.protocol === 'file:';
+    const badge = document.getElementById('modeBadge');
+    if (!isFile) {
+      apiMode = true;
+      apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3456' : '';
+      if (badge) { badge.textContent = '在线模式'; badge.className = 'mode-badge mode-online'; }
+      const area = document.getElementById('adminKeyArea'); if (area) area.style.display = '';
+    } else {
+      if (badge) { badge.textContent = '本地模式'; badge.className = 'mode-badge mode-offline'; }
+    }
+  })();
+
   async function init() {
     loadSettings();
 
-    // 检测是否为 API 模式（直接用 URL 判断，不用健康检查）
-    // file:// → 本地模式；http://localhost → API(本地服务器)；https://xxx → API(远程服务器)
+    // API 模式已在同步守卫中设定，此处仅输出日志
     const proto = window.location.protocol;
     const host  = window.location.hostname;
-    if (proto === 'file:') {
-      apiMode = false;
-      console.log('📦 本地存储模式（直接打开文件）');
-    } else {
-      apiMode = true;
-      apiBase = (host === 'localhost' || host === '127.0.0.1') ? 'http://localhost:3456' : '';
-      $('#adminKeyArea').style.display = '';
-      console.log('✅ API 模式 → ' + (apiBase || window.location.origin));
-    }
-    // 调试信息
+    console.log(apiMode ? '✅ API 模式 → ' + (apiBase || window.location.origin) : '📦 本地存储模式（直接打开文件）');
     const d = $('#debugInfo');
-    if (d) d.textContent = `协议:${proto} | 主机:${host} | API模式:${apiMode} | base:${apiBase || '(同源)'}`;
+    if (d) d.textContent = `协议:${proto} | 主机:${host} | apiMode:${apiMode} | base:${apiBase || '(同源)'} | ${new Date().toLocaleTimeString()}`;
 
     const savedKey = sessionStorage.getItem(ADMIN_SESSION);
     if (savedKey) adminKey = savedKey;
