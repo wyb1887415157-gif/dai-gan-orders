@@ -7,11 +7,17 @@ services:
     envVars:
       - key: ADMIN_KEY
         value: "1887415157"
-      - key: SMTP_USER
-        value: "3532368834@qq.com"
-      - key: SMTP_PASS
-        value: "nhukspkbrkrldaif"
-      - key: NOTIFY_EMAIL
-        value: "3532368834@qq.com"
-      - key: PHONE_KEY
-        value: "he-lin-dai-gan-phone-key-32b!"
+      - key: DB_HOST
+        value: "mysql3.sqlpub.com"
+      - key: DB_PORT
+        value: "3308"
+      - key: DB_USER
+        value: "helin1234"
+      - key: DB_NAME
+        value: "daigan"
+      # ↓ 以下敏感信息请在 Render 后台手动设置，不要提交到仓库
+      # - key: DB_PASSWORD    → 在 Render Dashboard → Environment 中添加
+      # - key: PHONE_KEY      → 在 Render Dashboard → Environment 中添加
+      # - key: SMTP_PASS      → 在 Render Dashboard → Environment 中添加（QQ邮箱授权码）
+      # - key: SMTP_USER      → 在 Render Dashboard → Environment 中添加
+      # - key: NOTIFY_EMAIL   → 在 Render Dashboard → Environment 中添加
