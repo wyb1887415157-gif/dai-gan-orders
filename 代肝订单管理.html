@@ -642,12 +642,6 @@ tbody tr:hover { background: #f8fcff; }
   'use strict';
 
   // ==================== 模式检测 ====================
-  // 自动检测是同源部署还是本地文件
-  const API_BASE = (window.location.protocol === 'file:')
-    ? ''  // 本地文件：尝试连接 localhost
-    : ''; // 同源部署：使用相对路径
-
-  // 如果本地文件打开，尝试连接默认后端
   const DEFAULT_API = (window.location.protocol === 'file:')
     ? 'http://localhost:3456'
     : '';

@@ -125,6 +125,7 @@ async function createMySQLBackend() {
   return {
     type: "MySQL",
     info: `${cfg.host}:${cfg.port}/${cfg.database}`,
+    pool,  // 供优雅关闭使用
     execute: (sql, params) => pool.execute(sql, params),
   };
 }
@@ -593,7 +594,7 @@ app.use((err, req, res, next) => {
 async function start() {
   await initDB();
 
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log("╔══════════════════════════════════════╗");
     console.log("║   🌸 代肝订单管理服务已启动         ║");
     console.log("╠══════════════════════════════════════╣");
@@ -602,6 +603,18 @@ async function start() {
     console.log(`║   数据库:  ${dbType} → ${db.info}`);
     console.log("╚══════════════════════════════════════╝");
   });
+
+  // 优雅退出：关闭数据库连接和 HTTP 服务
+  async function shutdown(signal) {
+    console.log(`\n🛑 收到 ${signal}，正在关闭...`);
+    server.close();
+    if (db && db.pool) {
+      try { await db.pool.end(); console.log("🔌 数据库连接已关闭"); } catch(e) {}
+    }
+    process.exit(0);
+  }
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT",  () => shutdown("SIGINT"));
 }
 
 start();
