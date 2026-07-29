@@ -1557,32 +1557,22 @@ tbody tr:hover { background: #f8fcff; }
   async function init() {
     loadSettings();
 
-    // 检测是否为 API 模式
+    // 检测是否为 API 模式（直接用 URL 判断，不用健康检查）
+    // file:// → 本地模式；http://localhost → API(本地服务器)；https://xxx → API(远程服务器)
+    const proto = window.location.protocol;
+    const host  = window.location.hostname;
+    if (proto === 'file:') {
+      apiMode = false;
+      console.log('📦 本地存储模式（直接打开文件）');
+    } else {
+      apiMode = true;
+      apiBase = (host === 'localhost' || host === '127.0.0.1') ? 'http://localhost:3456' : '';
+      $('#adminKeyArea').style.display = '';
+      console.log('✅ API 模式 → ' + (apiBase || window.location.origin));
+    }
+
     const savedKey = sessionStorage.getItem(ADMIN_SESSION);
     if (savedKey) adminKey = savedKey;
-
-    // 尝试连接后端（延长超时以应对 Render 冷启动）
-    let connected = false;
-    for (let retry = 0; retry < 2; retry++) {
-      try {
-        const testUrl = DEFAULT_API ? DEFAULT_API + '/api/health' : '/api/health';
-        const resp = await fetch(testUrl, { signal: AbortSignal.timeout(8000) });
-        if (resp.ok) {
-          apiMode = true;
-          apiBase = DEFAULT_API;
-          $('#adminKeyArea').style.display = '';
-          console.log('✅ 已连接到后端服务');
-          connected = true;
-          break;
-        }
-      } catch (e) {
-        console.log(`⏳ 连接后端尝试 ${retry + 1}/2 失败，${retry === 0 ? '重试中...' : '使用本地模式'}`);
-      }
-    }
-    if (!connected) {
-      apiMode = false;
-      console.log('📦 使用本地存储模式（未检测到后端服务）');
-    }
 
     if (apiMode) {
       await refreshAllData();
