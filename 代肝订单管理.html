@@ -877,13 +877,28 @@ tbody tr:hover { background: #f8fcff; }
     $('#adminKeyInput').style.display = isAdm ? 'none' : '';
     // 管理员操作区域
     if (apiMode) {
+      // 价格表管理：只有管理员能编辑/上传
       $('#priceForm').style.display = isAdm ? '' : 'none';
+      $('#priceImgDropzone').style.display = isAdm ? '' : 'none';
       $('#priceImgAdminHint').style.display = isAdm ? 'none' : '';
       $('#refreshBtn').style.display = isAdm ? '' : 'none';
+      // 手动添加面板：只有管理员能访问
+      const addTabBtn = document.querySelector('[data-tab="add"]');
+      if (addTabBtn) addTabBtn.style.display = isAdm ? '' : 'none';
+      // 导入数据：只有管理员能操作
+      $('#importBtn').style.display = isAdm ? '' : 'none';
+      // 如果在 API 模式且不是管理员，关闭手动添加面板
+      if (!isAdm && currentTab === 'add') {
+        switchTab('order');
+      }
     } else {
       $('#priceForm').style.display = '';
+      $('#priceImgDropzone').style.display = '';
       $('#priceImgAdminHint').style.display = 'none';
       $('#refreshBtn').style.display = 'none';
+      $('#importBtn').style.display = '';
+      const addTabBtn = document.querySelector('[data-tab="add"]');
+      if (addTabBtn) addTabBtn.style.display = '';
     }
     updateModeBadge();
   }
@@ -1116,9 +1131,11 @@ tbody tr:hover { background: #f8fcff; }
     renderPriceGrid($('#priceGridManage'), priceList, showActions);
     if (apiMode && !isAdmin()) {
       $('#priceForm').style.display = 'none';
+      $('#priceImgDropzone').style.display = 'none';
       $('#priceImgAdminHint').style.display = '';
     } else {
       $('#priceForm').style.display = '';
+      $('#priceImgDropzone').style.display = '';
       $('#priceImgAdminHint').style.display = 'none';
     }
   }
@@ -1252,6 +1269,8 @@ tbody tr:hover { background: #f8fcff; }
     const data  = getFilteredOrders();
     const tbody = $('#tableBody');
     const canEdit = !apiMode || isAdmin();
+    // 非管理员隐藏"手动添加"按钮
+    $('#backToAddBtn').style.display = canEdit ? '' : 'none';
 
     if (!data.length) {
       tbody.innerHTML = '<tr class="empty-row"><td colspan="7"><span class="empty-icon">📭</span>还没有订单哦~</td></tr>';
