@@ -661,7 +661,7 @@ tbody tr:hover { background: #f8fcff; }
   const ADMIN_SESSION = 'dai_gan_admin';
 
   // ==================== 全局状态 ====================
-  let apiMode   = false;               // true=API模式, false=本地模式
+  let apiMode   = (window.location.protocol !== 'file:');  // 默认根据 URL 判断
   let apiBase   = DEFAULT_API;         // API 地址
   let adminKey  = '';                  // 管理员密钥
   let orders    = [];
@@ -925,6 +925,9 @@ tbody tr:hover { background: #f8fcff; }
       badge.classList.add('mode-offline');
       subtitle.textContent = '图片价格表 · 文字价格表 · 自助下单 · 高效管理 ✨';
     }
+    // 实时调试：显示当前状态
+    const d = $('#debugInfo');
+    if (d) d.textContent = `协议:${window.location.protocol} | 主机:${window.location.hostname} | apiMode:${apiMode} | time:${new Date().toLocaleTimeString()}`;
   }
 
   // ==================== 主题 / 背景 ====================
