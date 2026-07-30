@@ -1846,15 +1846,18 @@ tbody tr:hover { background: #f8fcff; }
     });
 
     let html = '';
+    const showAdminEdit = apiMode && isAdmin();
     for (const [cat, items] of Object.entries(groups)) {
       html += `<div style="grid-column:1/-1;font-weight:700;color:var(--primary-dark);font-size:0.85rem;margin-top:6px;padding:4px 0;border-bottom:1px solid #f0eafa;">📌 ${escHtml(cat)}</div>`;
       items.forEach(item => {
+        const hasId = !!item.id;
         html += `<div class="price-card">
           <div class="price-info">
             <div class="price-name">${escHtml(item.name)}</div>
             <div class="price-value">${fmtMoney(item.price)}</div>
           </div>
           <button class="btn-add-item" data-act="add-cart-customer" data-name="${escAttr(item.name)}" data-price="${item.price}" data-game="${escAttr(item.game)}" title="加入订单">➕</button>
+          ${showAdminEdit ? `<button class="btn btn-xs btn-outline" data-act="quick-edit-price" data-id="${escAttr(hasId ? item.id : '')}" data-game="${escAttr(item.game)}" data-cat="${escAttr(item.category || '')}" data-name="${escAttr(item.name)}" data-price="${item.price}" title="快速改价" style="margin-left:2px;flex-shrink:0;">✏️</button>` : ''}
         </div>`;
       });
     }
@@ -1868,6 +1871,35 @@ tbody tr:hover { background: #f8fcff; }
         cartItems.push({ cartId: genId(), game, name, price });
         renderCart();
         toast(`已加入：${name}`);
+      });
+    });
+
+    // 管理员快速改价
+    container.querySelectorAll('[data-act="quick-edit-price"]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const oldPrice = +btn.dataset.price;
+        const newPriceStr = prompt(`修改价格：${btn.dataset.name}\n当前：¥${oldPrice.toFixed(2)}`, oldPrice);
+        if (newPriceStr === null) return; // 用户取消
+        const newPrice = parseFloat(newPriceStr);
+        if (isNaN(newPrice) || newPrice < 0) { toast('请输入有效价格'); return; }
+        try {
+          const game = btn.dataset.game;
+          const name = btn.dataset.name;
+          const cat  = btn.dataset.cat;
+          const id   = btn.dataset.id;
+          if (id) {
+            await apiUpdatePriceItem(id, game, name, newPrice);
+          } else {
+            await apiAddPriceItem(game, name, newPrice);
+          }
+          await refreshAllData();
+          renderCustomerOrder();
+          renderPriceManage();
+          toast(`✅ 价格已更新：${name} → ¥${newPrice.toFixed(2)}`);
+        } catch (err) {
+          toast(`❌ 改价失败：${err.message}`);
+        }
       });
     });
   }
