@@ -1986,7 +1986,7 @@ tbody tr:hover { background: #f8fcff; }
         merged.push({ game: p.game, category: p.category || '其他', name: p.name, price: p.price, id: p.id });
       } else if (p.id) {
         const m = merged.find(m => m.game === p.game && m.name === p.name);
-        if (m) m.id = p.id;
+        if (m) { m.id = p.id; m.price = p.price; }
       }
     });
 
