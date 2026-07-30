@@ -358,7 +358,11 @@ app.get("/api/price-images", async (req, res) => {
     // 去掉 ORDER BY，避免大图片排序撑爆 SQLPub 免费版 sort buffer
     const [rows] = await db.execute("SELECT id, data_url, name, created FROM price_images");
     rows.sort((a, b) => String(b.created || '').localeCompare(String(a.created || '')));
-    res.json(rows.map(r => ({ id: r.id, dataUrl: r.data_url, data_url: r.data_url, name: r.name, created: r.created })));
+    // 只返回 dataUrl，不重复返回 data_url（减少响应体积）
+    const result = rows.map(r => ({ id: r.id, dataUrl: r.data_url, name: r.name, created: r.created }));
+    const totalSize = JSON.stringify(result).length;
+    console.log(`📸 返回 ${result.length} 张价格图片，响应大小 ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
+    res.json(result);
   } catch (e) {
     console.error("查询价格图片失败:", e.message);
     res.status(500).json({ error: "服务器错误" });
@@ -368,21 +372,32 @@ app.get("/api/price-images", async (req, res) => {
 app.post("/api/price-images", adminAuth, async (req, res) => {
   try {
     const { dataUrl, name } = req.body;
-    if (!dataUrl || !dataUrl.startsWith("data:image/")) {
-      return res.status(400).json({ error: "请上传有效的图片" });
+    if (!dataUrl || typeof dataUrl !== "string") {
+      return res.status(400).json({ error: "请上传有效的图片数据" });
     }
-    if (dataUrl.length > 10 * 1024 * 1024) {
-      return res.status(400).json({ error: "图片太大（最大 10MB）" });
+    if (!dataUrl.startsWith("data:image/")) {
+      return res.status(400).json({ error: "图片格式无效，仅支持 data:image/ 格式" });
+    }
+    const sizeMB = (dataUrl.length / 1024 / 1024).toFixed(2);
+    console.log(`📤 收到价格图片上传: name="${name}", base64 大小 ${sizeMB} MB`);
+    // 手机截图 base64 通常 5-15MB，放宽到 15MB
+    if (dataUrl.length > 15 * 1024 * 1024) {
+      return res.status(400).json({ error: `图片太大（${sizeMB} MB，最大 15 MB），请压缩后再上传` });
     }
     const id = generateId();
     await db.execute(
       "INSERT INTO price_images (id, data_url, name) VALUES (?, ?, ?)",
       [id, dataUrl, sanitize(name) || "价格表"]
     );
+    console.log(`✅ 价格图片已入库: id=${id}, size=${sizeMB} MB`);
     res.json({ ok: true, id });
   } catch (e) {
-    console.error("上传价格图片失败:", e.message);
-    res.status(500).json({ error: "上传失败" });
+    // 打印完整错误（含 code, errno 等），方便定位 MySQL packet 超限等问题
+    console.error("上传价格图片失败:", e);
+    const msg = e.code === "ER_NET_PACKET_TOO_LARGE"
+      ? "图片太大，超过数据库允许的包大小上限，请压缩图片"
+      : "上传失败: " + (e.message || "未知错误");
+    res.status(500).json({ error: msg });
   }
 });
 
@@ -471,9 +486,20 @@ app.post("/api/orders", orderLimiter, async (req, res) => {
 
     let images = [];
     if (Array.isArray(req.body.images)) {
+      const raw = req.body.images.length;
       images = req.body.images
-        .filter(img => typeof img === "string" && img.startsWith("data:image/") && img.length < 5 * 1024 * 1024)
+        .filter(img => {
+          if (typeof img !== "string" || !img.startsWith("data:image/")) return false;
+          if (img.length > 15 * 1024 * 1024) {
+            console.log(`⚠️  跳过超大证明图: ${(img.length/1024/1024).toFixed(1)} MB`);
+            return false;
+          }
+          return true;
+        })
         .slice(0, 3);
+      if (images.length < raw) {
+        console.log(`📸 订单证明图: ${raw} 张提交 → ${images.length} 张入库（${images.map(i=>(i.length/1024/1024).toFixed(1)+'MB').join(', ')}）`);
+      }
     }
 
     const id = generateId();
@@ -554,7 +580,7 @@ app.put("/api/orders/:id", adminAuth, async (req, res) => {
     let images = [];
     if (Array.isArray(req.body.images)) {
       images = req.body.images
-        .filter(img => typeof img === "string" && img.startsWith("data:image/") && img.length < 5 * 1024 * 1024)
+        .filter(img => typeof img === "string" && img.startsWith("data:image/") && img.length <= 15 * 1024 * 1024)
         .slice(0, 3);
     }
 
@@ -607,6 +633,17 @@ app.post("/api/auth", (req, res) => {
 
 // ==================== 前端静态文件 ====================
 app.use(express.static(__dirname, { etag: false, setHeaders: (res) => { res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); res.setHeader("Pragma", "no-cache"); res.setHeader("Expires", "0"); } }));
+
+// body-parser 错误（JSON 格式错误 / 超过大小限制）
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large' || err.status === 413) {
+    return res.status(413).json({ error: "请求体过大，图片请压缩到 15 MB 以内" });
+  }
+  if (err.type === 'entity.parse.failed' || err.status === 400) {
+    return res.status(400).json({ error: "请求格式错误" });
+  }
+  next(err);
+});
 
 // ==================== 404 ====================
 app.use((req, res) => {

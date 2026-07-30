@@ -554,7 +554,7 @@ tbody tr:hover { background: #f8fcff; }
       </div>
     </div>
 
-    <!-- ===== 价格参考表1：每日委托 & 包月 ===== -->
+    <!-- ===== 价格参考表1：托管类 ===== -->
     <div class="card">
       <div class="card-header">📋 托管类（包月业务全帮领前瞻兑换码）</div>
       <div class="table-wrap" style="margin-bottom:12px;">
@@ -581,17 +581,18 @@ tbody tr:hover { background: #f8fcff; }
       </div>
     </div>
 
-    <!-- ===== 价格参考表2：资源采集 & 地图探索 ===== -->
+    <!-- ===== 价格参考表2：钓鱼武器 & 材料 & 地图探索 ===== -->
     <div class="card">
-      <div class="card-header">📋 资源采集 & 地图探索价格</div>
+      <div class="card-header">📋 钓鱼武器 · 材料 · 地图探索价格</div>
+
       <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🎣 钓鱼武器</p>
       <div class="table-wrap" style="margin-bottom:14px;">
         <table style="min-width:450px;">
-          <thead><tr><th>武器</th><th>满精本体</th><th>后续 / 精</th></tr></thead>
+          <thead><tr><th>武器</th><th>满精本体</th><th>后续 / 精</th><th>合计</th></tr></thead>
           <tbody>
-            <tr><td><strong>鱼叉</strong></td><td>25r</td><td>15r/精（共 70r）</td></tr>
-            <tr><td><strong>水管</strong></td><td>20r</td><td>10r/精（共 60r）</td></tr>
-            <tr><td><strong>鱼弓</strong></td><td>20r</td><td>10r/精（共 60r）</td></tr>
+            <tr><td><strong>鱼叉</strong></td><td>25r</td><td>15r/精</td><td>70r</td></tr>
+            <tr><td><strong>水管</strong></td><td>20r</td><td>10r/精</td><td>60r</td></tr>
+            <tr><td><strong>鱼弓</strong></td><td>20r</td><td>10r/精</td><td>60r</td></tr>
           </tbody>
         </table>
       </div>
@@ -602,7 +603,9 @@ tbody tr:hover { background: #f8fcff; }
           <thead><tr><th>材料类型</th><th>价格</th></tr></thead>
           <tbody>
             <tr><td>采集材料</td><td>0.1 — 0.2r/个</td></tr>
-            <tr><td>掉落材料</td><td>小 0.1r / 中 0.2r / 大 0.5r</td></tr>
+            <tr><td>掉落材料·小</td><td>0.1r/个</td></tr>
+            <tr><td>掉落材料·中</td><td>0.2r/个</td></tr>
+            <tr><td>掉落材料·大</td><td>0.5r/个</td></tr>
             <tr><td>锻造材料（白铁矿）</td><td>0.1r/个</td></tr>
           </tbody>
         </table>
@@ -610,29 +613,37 @@ tbody tr:hover { background: #f8fcff; }
 
       <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 地图探索类</p>
       <div class="table-wrap">
-        <table style="min-width:550px;">
+        <table style="min-width:600px;">
           <thead><tr><th>地区 / 探索项</th><th>价格明细</th></tr></thead>
           <tbody>
-            <tr><td>蒙德（包风神瞳收集）</td><td>40r/区域满探索 | 全包 160r</td></tr>
-            <tr><td>雪山（包绯红玉髓）</td><td>80r 满探索 | 前置任务 40r</td></tr>
-            <tr><td>璃月（包岩神瞳+古云有螭）</td><td>60r/区域 | 全包 300r</td></tr>
-            <tr><td>层岩巨渊（包前置+流明石）</td><td>上层 50r | 下层 100r</td></tr>
-            <tr><td>稻妻（包雷神瞳+前置）</td><td>满探索 160r | 前置 40r</td></tr>
-            <tr><td>渊下宫（前置+键纹）</td><td>90r | 前置 40r | 键纹 30r</td></tr>
-            <tr><td>须弥 · 雨林（雨林书 180r）</td><td>60r/区域 | 全包 300r（森林书）</td></tr>
-            <tr><td>须弥 · 沙漠 3.1</td><td>70r/区域 | 全包 200r</td></tr>
-            <tr><td>须弥 · 千壑沙地</td><td>160r（沙地书 60r）</td></tr>
-            <tr><td>须弥 · 沙漠 3.6</td><td>200r（花神书 80r）</td></tr>
-            <tr><td>枫丹 4.0 / 4.1</td><td>240r | 200r</td></tr>
-            <tr><td>纳塔 5.0 / 5.2</td><td>180r | 140r</td></tr>
-            <tr><td>挪德卡莱 6.0 / 6.3</td><td>220r | 150r</td></tr>
+            <tr><td>蒙德（包风神瞳全收集）</td><td>40r/区域满探索 | 全包 160r</td></tr>
+            <tr><td>雪山（包绯红玉髓全收集）</td><td>80r 满探索 | 前置任务 40r</td></tr>
+            <tr><td>璃月（包岩神瞳全收集+古云有螭）</td><td>60r/区域满探索 | 全包 300r</td></tr>
+            <tr><td>层岩巨渊（包前置+流明石全收集）</td><td>上层 50r | 下层 100r</td></tr>
+            <tr><td>沉玉谷（包苍灵鲤）</td><td>满探索 160r | 前置任务 40r</td></tr>
+            <tr><td>稻妻（包雷神瞳全收集+前置任务）</td><td>60r/岛满探索 | 全包 400r</td></tr>
+            <tr><td>渊下宫</td><td>满探索 90r | 前置 40r | 键纹 30r</td></tr>
+            <tr><td>须弥 · 雨林（前置森林书 180r）</td><td>60r/区域满探索 | 全包 300r</td></tr>
+            <tr><td>须弥 · 沙漠 3.1（前置沙漠书 60r）</td><td>70r/区域满探索 | 全包 200r</td></tr>
+            <tr><td>须弥 · 千壑沙地（前置沙地书 60r）</td><td>满探索 160r</td></tr>
+            <tr><td>须弥 · 沙漠 3.6（前置花神书 80r）</td><td>满探索 200r</td></tr>
+            <tr><td>枫丹 4.0</td><td>满探索 240r</td></tr>
+            <tr><td>枫丹 4.1</td><td>满探索 160r</td></tr>
+            <tr><td>枫丹 4.2</td><td>满探索 200r</td></tr>
+            <tr><td>枫丹 4.6</td><td>满探索 140r</td></tr>
+            <tr><td>纳塔 5.0</td><td>满探索 240r</td></tr>
+            <tr><td>纳塔 5.2</td><td>满探索 200r</td></tr>
+            <tr><td>纳塔 5.5</td><td>满探索 180r</td></tr>
+            <tr><td>纳塔 5.8</td><td>满探索 140r</td></tr>
+            <tr><td>挪德卡莱 6.0</td><td>满探索 220r</td></tr>
+            <tr><td>挪德卡莱 6.3</td><td>满探索 150r</td></tr>
             <tr><td>挪德卡莱 6.7</td><td>地图满探索 180r（多退少补）</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- ===== 价格参考表3：神瞳收集 & 任务流程 ===== -->
+    <!-- ===== 价格参考表3：神瞳 & 任务 ===== -->
     <div class="card">
       <div class="card-header">📋 神瞳收集 & 任务流程价格</div>
 
@@ -649,52 +660,108 @@ tbody tr:hover { background: #f8fcff; }
         </table>
       </div>
 
-      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 魔神任务</p>
+      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 魔神任务 — 蒙德篇</p>
       <div class="table-wrap" style="margin-bottom:14px;">
-        <table style="min-width:550px;">
-          <thead><tr><th>篇章</th><th>章节</th><th>价格</th><th>篇章</th><th>章节</th><th>价格</th></tr></thead>
+        <table style="min-width:450px;">
+          <thead><tr><th>章节</th><th>名称</th><th>价格</th></tr></thead>
           <tbody>
-            <tr><td rowspan="3"><strong>蒙德篇</strong></td><td>I</td><td>20r</td><td rowspan="5"><strong>须弥篇</strong></td><td>I</td><td>40r</td></tr>
-            <tr><td>II</td><td>20r</td><td>II</td><td>20r</td></tr>
-            <tr><td>III</td><td>20r</td><td>III</td><td>30r</td></tr>
-            <tr><td rowspan="4"><strong>璃月篇</strong></td><td>I</td><td>20r</td><td>IV</td><td>30r</td></tr>
-            <tr><td>II</td><td>20r</td><td>V</td><td>50r</td></tr>
-            <tr><td>III</td><td>20r</td><td>间章·鹤归</td><td>30r</td></tr>
-            <tr><td>IV</td><td>25r</td><td>间章·迷踪</td><td>30r</td></tr>
-            <tr><td colspan="3"></td><td rowspan="5"><strong>枫丹篇</strong></td><td>I</td><td>30r</td></tr>
-            <tr><td rowspan="6"><strong>稻妻篇</strong></td><td>序幕</td><td>20r</td><td>II</td><td>30r</td></tr>
-            <tr><td>I</td><td>30r</td><td>III</td><td>30r</td></tr>
-            <tr><td>II</td><td>40r</td><td>IV</td><td>30r</td></tr>
-            <tr><td>III</td><td>25r</td><td>V</td><td>50r</td></tr>
-            <tr><td>间章·鹤归</td><td>20r</td><td>间章·睡前</td><td>30r</td></tr>
-            <tr><td>间章·迷踪</td><td>30r</td><td></td><td></td></tr>
+            <tr><td>第一幕</td><td>捕风的异乡人</td><td>20r</td></tr>
+            <tr><td>第二幕</td><td>为了没有眼泪的明天</td><td>20r</td></tr>
+            <tr><td>第三幕</td><td>巨龙与自由之歌</td><td>20r</td></tr>
           </tbody>
         </table>
       </div>
 
-      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📜 传说 / 邀约 / 世界任务</p>
+      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 魔神任务 — 璃月篇</p>
       <div class="table-wrap" style="margin-bottom:14px;">
         <table style="min-width:450px;">
-          <thead><tr><th>任务类型</th><th>价格</th></tr></thead>
+          <thead><tr><th>章节</th><th>名称</th><th>价格</th></tr></thead>
+          <tbody>
+            <tr><td>第一幕</td><td>浮生浮世千年间</td><td>20r</td></tr>
+            <tr><td>第二幕</td><td>辞行久远之躯</td><td>20r</td></tr>
+            <tr><td>第三幕</td><td>迫近的客星</td><td>35r</td></tr>
+            <tr><td>序幕</td><td>戴因斯雷布</td><td>20r</td></tr>
+            <tr><td>第四幕</td><td>我们终将重逢</td><td>25r</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 魔神任务 — 稻妻篇</p>
+      <div class="table-wrap" style="margin-bottom:14px;">
+        <table style="min-width:450px;">
+          <thead><tr><th>章节</th><th>名称</th><th>价格</th></tr></thead>
+          <tbody>
+            <tr><td>序幕</td><td>振袖秋风问红叶</td><td>20r</td></tr>
+            <tr><td>第一幕</td><td>不动神明 恒长乐园</td><td>30r</td></tr>
+            <tr><td>第二幕</td><td>无念无想泡影断灭</td><td>40r</td></tr>
+            <tr><td>第三幕</td><td>千手百眼天下人间</td><td>30r</td></tr>
+            <tr><td>第四幕</td><td>回响深渊的安魂曲</td><td>25r</td></tr>
+            <tr><td>间章</td><td>风起鹤归</td><td>20r</td></tr>
+            <tr><td>间章</td><td>危途迷踪</td><td>30r</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 魔神任务 — 须弥篇</p>
+      <div class="table-wrap" style="margin-bottom:14px;">
+        <table style="min-width:450px;">
+          <thead><tr><th>章节</th><th>名称</th><th>价格</th></tr></thead>
+          <tbody>
+            <tr><td>第一幕</td><td>穿过烟帷与暗林</td><td>40r</td></tr>
+            <tr><td>第二幕</td><td>千朵玫瑰带来的黎明</td><td>35r</td></tr>
+            <tr><td>第三幕</td><td>迷幻与梦幻的欺骗</td><td>40r</td></tr>
+            <tr><td>第四幕</td><td>赤王之主与三朝圣者</td><td>30r</td></tr>
+            <tr><td>第五幕</td><td>虚空鼓动劫火高扬</td><td>50r</td></tr>
+            <tr><td>间章</td><td>倾落湛蓝</td><td>30r</td></tr>
+            <tr><td>第六幕</td><td>卡利贝尔</td><td>30r</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 魔神任务 — 枫丹篇</p>
+      <div class="table-wrap" style="margin-bottom:14px;">
+        <table style="min-width:450px;">
+          <thead><tr><th>章节</th><th>名称</th><th>价格</th></tr></thead>
+          <tbody>
+            <tr><td>第一幕</td><td>白露与黑潮的序诗</td><td>30r</td></tr>
+            <tr><td>第二幕</td><td>仿若无因飘落的轻雨</td><td>30r</td></tr>
+            <tr><td>第三幕</td><td>向深水中的晨星</td><td>30r</td></tr>
+            <tr><td>第四幕</td><td>谕示胎动的终焉之刻</td><td>30r</td></tr>
+            <tr><td>第五幕</td><td>罪人舞步旋</td><td>50r</td></tr>
+            <tr><td>间章</td><td>睡前故事</td><td>30r</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 魔神任务 — 纳塔篇</p>
+      <div class="table-wrap" style="margin-bottom:14px;">
+        <table style="min-width:450px;">
+          <thead><tr><th>章节</th><th>名称</th><th>价格</th></tr></thead>
+          <tbody>
+            <tr><td>第一幕</td><td>荣花与炎日之途</td><td>40r</td></tr>
+            <tr><td>第二幕</td><td>黑石湮落白石下</td><td>30r</td></tr>
+            <tr><td>第三幕</td><td>镜与迷烟的彼方</td><td>30r</td></tr>
+            <tr><td>间章</td><td>万火归一</td><td>20r</td></tr>
+            <tr><td>第五幕</td><td>炽热的还魂诗</td><td>50r</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📜 传说 / 邀约 / 大型世界任务</p>
+      <div class="table-wrap" style="margin-bottom:14px;">
+        <table style="min-width:450px;">
+          <thead><tr><th>任务</th><th>价格</th></tr></thead>
           <tbody>
             <tr><td>传说任务</td><td>15r/个</td></tr>
             <tr><td>邀约任务</td><td>15r/个</td></tr>
             <tr><td>世界任务</td><td>5 — 200r 不等</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📚 大型世界任务</p>
-      <div class="table-wrap" style="margin-bottom:14px;">
-        <table style="min-width:450px;">
-          <thead><tr><th>任务名称</th><th>价格</th></tr></thead>
-          <tbody>
-            <tr><td>森林书</td><td>180r | 后续 20r | 76兰那罗 50r</td></tr>
+            <tr><td>森林书</td><td>180r | 后续 30r | 76兰那罗 50r</td></tr>
             <tr><td>神樱大祓</td><td>40r</td></tr>
-            <tr><td>海洋书</td><td>60r</td></tr>
             <tr><td>沙漠书</td><td>60r | 后续 30r</td></tr>
-            <tr><td>监狱书</td><td>60r</td></tr>
             <tr><td>沙地书</td><td>60r | 后续 30r</td></tr>
+            <tr><td>花神书</td><td>80r | 后续 30r</td></tr>
+            <tr><td>海洋书</td><td>60r</td></tr>
+            <tr><td>监狱书</td><td>60r</td></tr>
           </tbody>
         </table>
       </div>
@@ -709,6 +776,186 @@ tbody tr:hover { background: #f8fcff; }
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== 价格参考表：异环 ===== -->
+  <div class="card">
+    <div class="card-header">🎮 异环 — 1.2 版本价格参考</div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📋 版本任务（单次）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td><strong>主线任务</strong></td><td>40r</td></tr>
+          <tr><td><strong>999夜·限时奖励</strong></td><td>35r</td></tr>
+          <tr><td><strong>999夜·清空商店</strong>（主线+限时奖励+清空纽扣商店）</td><td>350r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 地图收集（含支线+异象委托）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>地图全收集（1.0 + 1.1）</td><td>330r</td></tr>
+          <tr><td>1.0 地图全收集</td><td>300r</td></tr>
+          <tr><td>1.1 地图全收集</td><td>30r</td></tr>
+          <tr><td>粉爪大劫案</td><td>25r/期</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📅 日常托管套餐（月付）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>套餐</th><th>内容</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td><strong>日常套餐</strong></td><td>每日活跃打满</td><td>35r/月</td></tr>
+          <tr><td><strong>日体套餐</strong></td><td>每日活跃+每日体力+周本</td><td>70r/月</td></tr>
+          <tr><td><strong>精托套餐</strong></td><td>日体套餐+期间活动+都市活力</td><td>150r/月</td></tr>
+          <tr><td><strong>全托套餐</strong></td><td>精托套餐+每期粉爪</td><td>240r/月</td></tr>
+          <tr><td><strong>至尊套餐</strong></td><td>全托套餐+规划体力精致养号+深渊</td><td>350r/月</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🚀 开荒套餐</p>
+    <div class="table-wrap">
+      <table style="min-width:550px;">
+        <thead><tr><th>套餐</th><th>内容</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>⭐ 开荒套餐1</td><td>主线任务全清 + 解锁全图传送点（留卡等级）</td><td>868r</td></tr>
+          <tr><td>⭐ 开荒套餐2</td><td>任务全清（主线+支线等）+ 解锁全图传送点</td><td>1288r</td></tr>
+          <tr><td>⭐ 开荒套餐3</td><td>所有任务全清 + 解锁全图传送点 + 地图全收集（全赠礼+偷石+异象委托等）</td><td>1688r</td></tr>
+          <tr><td>✧ 至尊开荒</td><td>全主线+全支线+全收集+全活动+都市玩法当前版本毕业+其他玩法奖励拿满</td><td>2088r</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== 价格参考表：鸣潮 ===== -->
+  <div class="card">
+    <div class="card-header">🎮 鸣潮 — 价格参考</div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📅 托管类</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>日常体力（体力指定）</td><td>30r/月</td></tr>
+          <tr><td>精托·可指定（日常体力+期间活动+肉鸽+电台满级）</td><td>100r/月</td></tr>
+          <tr><td>账号全托（精托+海虚+角色养成+账号规划·免费帮打36残像）</td><td>240r/版本</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">⚔️ 挑战内容</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:350px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>冥歌海墟</td><td>10r/次</td></tr>
+          <tr><td>深塔</td><td>10r/次</td></tr>
+          <tr><td>千道门扉的异想</td><td>3r/次</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 探索度 — 全收集</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:450px;">
+        <thead><tr><th>项目</th><th>价格</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td>100%全收集</td><td>+100r</td><td>包含地图探索度的危行任务，不包含主线</td></tr>
+          <tr><td>瑝珑区域（瑝珑+黑海岸全收集）</td><td>390r</td><td></td></tr>
+          <tr><td>黎那汐塔全收集</td><td>460r</td><td></td></tr>
+          <tr><td>3.0版本·罗伊伊原全收集</td><td>160r</td><td></td></tr>
+          <tr><td>3.1版本·罗伊冰原全收集</td><td>60r</td><td></td></tr>
+          <tr><td>3.3版本·罗伊冰原全收集</td><td>65r</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 瑝珑区域 — 单区域探索</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>区域</th><th>价格</th><th>区域</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>云陵谷</td><td>20r</td><td>无明湾</td><td>20r</td></tr>
+          <tr><td>今州城</td><td>20r</td><td>北落野</td><td>20r</td></tr>
+          <tr><td>中曲台地</td><td>49r</td><td>怨鸟泽</td><td>35r</td></tr>
+          <tr><td>荒石高地</td><td>40r</td><td>虎口山脉</td><td>30r</td></tr>
+          <tr><td>归墟港市</td><td>30r</td><td>乘霄山</td><td>55r</td></tr>
+          <tr><td>无光之森</td><td>30r</td><td>黑海岸</td><td>50r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 黎那汐塔 — 单区域探索</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>区域</th><th>价格</th><th>区域</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>拉古那城</td><td>5r</td><td>檀生半岛</td><td>30r</td></tr>
+          <tr><td>埃弗拉金库</td><td>20r</td><td>狄萨莱海脊</td><td>20r</td></tr>
+          <tr><td>悲叹墓岛</td><td>25r</td><td>黎那利群岛</td><td>20r</td></tr>
+          <tr><td>赞祷圣迹</td><td>30r</td><td>下层金库</td><td>30r</td></tr>
+          <tr><td>佛风水畔</td><td>25r</td><td>阿维纽林</td><td>45r</td></tr>
+          <tr><td>氪探水境</td><td>25r</td><td>贝奥海域</td><td>25r</td></tr>
+          <tr><td>七丘</td><td>80r</td><td>隐海试炼场</td><td>25r</td></tr>
+          <tr><td>桑古伊斯狩场</td><td>45r</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🎵 声骸类</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>锄大地（可指定）</td><td>20r/小时</td></tr>
+          <tr><td>毕业声骸全套（属性双爆+两个有效词条）</td><td>325r</td></tr>
+          <tr><td>单/双爆声骸（一套）</td><td>200r</td></tr>
+          <tr><td>数据坞·25级全包</td><td>200r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📜 任务与活动</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>主线任务</td><td>25r/幕</td></tr>
+          <tr><td>伴星任务</td><td>15r</td></tr>
+          <tr><td>危行任务</td><td>10r</td></tr>
+          <tr><td>纪闻任务</td><td>5r</td></tr>
+          <tr><td>大活动</td><td>30 — 60r</td></tr>
+          <tr><td>小活动</td><td>15r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📦 常驻活动（性价比低，非必要不选）</p>
+    <div class="table-wrap">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>老人与海</td><td>50r</td></tr>
+          <tr><td>团团团团转</td><td>40r</td></tr>
+          <tr><td>幻梦游乐园</td><td>30r</td></tr>
+          <tr><td>浸梦海床</td><td>60r</td></tr>
+          <tr><td>失序梦途</td><td>30r</td></tr>
+          <tr><td>激斗！向着荣耀之丘</td><td>30r</td></tr>
+          <tr><td>荣耀之丘·激斗重燃</td><td>35r</td></tr>
+          <tr><td>潮蚀模拟</td><td>50r</td></tr>
+          <tr><td>穗波怪异物语</td><td>35r</td></tr>
+          <tr><td>旌旗不落</td><td>25r</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -902,15 +1149,17 @@ tbody tr:hover { background: #f8fcff; }
     { game:'原神', category:'材料类', name:'白铁矿（锻造材料）', price:0.1 },
     // --- 地图探索 ---
     { game:'原神', category:'地图探索', name:'蒙德·单区域满探索', price:40 },
-    { game:'原神', category:'地图探索', name:'蒙德·全包（含风神瞳）', price:160 },
-    { game:'原神', category:'地图探索', name:'雪山·满探索（含绯红玉髓）', price:80 },
+    { game:'原神', category:'地图探索', name:'蒙德·全包（含风神瞳全收集）', price:160 },
+    { game:'原神', category:'地图探索', name:'雪山·满探索（含绯红玉髓全收集）', price:80 },
     { game:'原神', category:'地图探索', name:'雪山·前置任务', price:40 },
     { game:'原神', category:'地图探索', name:'璃月·单区域', price:60 },
-    { game:'原神', category:'地图探索', name:'璃月·全包（含岩神瞳+古云有螭）', price:300 },
+    { game:'原神', category:'地图探索', name:'璃月·全包（含岩神瞳全收集+古云有螭）', price:300 },
     { game:'原神', category:'地图探索', name:'层岩巨渊·上层', price:50 },
-    { game:'原神', category:'地图探索', name:'层岩巨渊·下层', price:100 },
-    { game:'原神', category:'地图探索', name:'稻妻·满探索（含雷神瞳+前置）', price:160 },
-    { game:'原神', category:'地图探索', name:'稻妻·前置任务', price:40 },
+    { game:'原神', category:'地图探索', name:'层岩巨渊·下层（包前置+流明石全收集）', price:100 },
+    { game:'原神', category:'地图探索', name:'沉玉谷·满探索（包苍灵鲤）', price:160 },
+    { game:'原神', category:'地图探索', name:'沉玉谷·前置任务', price:40 },
+    { game:'原神', category:'地图探索', name:'稻妻·单岛满探索', price:60 },
+    { game:'原神', category:'地图探索', name:'稻妻·全包（含雷神瞳全收集+前置）', price:400 },
     { game:'原神', category:'地图探索', name:'渊下宫·完整', price:90 },
     { game:'原神', category:'地图探索', name:'渊下宫·前置', price:40 },
     { game:'原神', category:'地图探索', name:'渊下宫·键纹', price:30 },
@@ -920,13 +1169,17 @@ tbody tr:hover { background: #f8fcff; }
     { game:'原神', category:'地图探索', name:'须弥沙漠3.1·全包', price:200 },
     { game:'原神', category:'地图探索', name:'须弥千壑沙地', price:160 },
     { game:'原神', category:'地图探索', name:'须弥沙漠3.6', price:200 },
-    { game:'原神', category:'地图探索', name:'枫丹4.0', price:240 },
-    { game:'原神', category:'地图探索', name:'枫丹4.1', price:200 },
-    { game:'原神', category:'地图探索', name:'纳塔5.0', price:180 },
-    { game:'原神', category:'地图探索', name:'纳塔5.2', price:140 },
-    { game:'原神', category:'地图探索', name:'挪德卡莱6.0', price:220 },
-    { game:'原神', category:'地图探索', name:'挪德卡莱6.3', price:150 },
-    { game:'原神', category:'地图探索', name:'挪德卡莱6.7（多退少补）', price:180 },
+    { game:'原神', category:'地图探索', name:'枫丹4.0·满探索', price:240 },
+    { game:'原神', category:'地图探索', name:'枫丹4.1·满探索', price:160 },
+    { game:'原神', category:'地图探索', name:'枫丹4.2·满探索', price:200 },
+    { game:'原神', category:'地图探索', name:'枫丹4.6·满探索', price:140 },
+    { game:'原神', category:'地图探索', name:'纳塔5.0·满探索', price:240 },
+    { game:'原神', category:'地图探索', name:'纳塔5.2·满探索', price:200 },
+    { game:'原神', category:'地图探索', name:'纳塔5.5·满探索', price:180 },
+    { game:'原神', category:'地图探索', name:'纳塔5.8·满探索', price:140 },
+    { game:'原神', category:'地图探索', name:'挪德卡莱6.0·满探索', price:220 },
+    { game:'原神', category:'地图探索', name:'挪德卡莱6.3·满探索', price:150 },
+    { game:'原神', category:'地图探索', name:'挪德卡莱6.7·满探索（多退少补）', price:180 },
     // --- 神瞳类 ---
     { game:'原神', category:'神瞳类', name:'风神瞳', price:30 },
     { game:'原神', category:'神瞳类', name:'岩神瞳', price:60 },
@@ -936,50 +1189,164 @@ tbody tr:hover { background: #f8fcff; }
     { game:'原神', category:'神瞳类', name:'火神瞳', price:130 },
     { game:'原神', category:'神瞳类', name:'月神瞳', price:100 },
     { game:'原神', category:'神瞳类', name:'绯红玉髓', price:40 },
-    // --- 魔神任务 ---
-    { game:'原神', category:'魔神任务', name:'蒙德篇 I', price:20 },
-    { game:'原神', category:'魔神任务', name:'蒙德篇 II', price:20 },
-    { game:'原神', category:'魔神任务', name:'蒙德篇 III', price:20 },
-    { game:'原神', category:'魔神任务', name:'璃月篇 I', price:20 },
-    { game:'原神', category:'魔神任务', name:'璃月篇 II', price:20 },
-    { game:'原神', category:'魔神任务', name:'璃月篇 III', price:20 },
-    { game:'原神', category:'魔神任务', name:'璃月篇 IV', price:25 },
-    { game:'原神', category:'魔神任务', name:'稻妻篇 序幕', price:20 },
-    { game:'原神', category:'魔神任务', name:'稻妻篇 I', price:30 },
-    { game:'原神', category:'魔神任务', name:'稻妻篇 II', price:40 },
-    { game:'原神', category:'魔神任务', name:'稻妻篇 III', price:25 },
-    { game:'原神', category:'魔神任务', name:'间章·鹤归', price:20 },
-    { game:'原神', category:'魔神任务', name:'间章·迷踪', price:30 },
-    { game:'原神', category:'魔神任务', name:'须弥篇 I', price:40 },
-    { game:'原神', category:'魔神任务', name:'须弥篇 II', price:20 },
-    { game:'原神', category:'魔神任务', name:'须弥篇 III', price:30 },
-    { game:'原神', category:'魔神任务', name:'须弥篇 IV', price:30 },
-    { game:'原神', category:'魔神任务', name:'须弥篇 V', price:50 },
-    { game:'原神', category:'魔神任务', name:'枫丹篇 I', price:30 },
-    { game:'原神', category:'魔神任务', name:'枫丹篇 II', price:30 },
-    { game:'原神', category:'魔神任务', name:'枫丹篇 III', price:30 },
-    { game:'原神', category:'魔神任务', name:'枫丹篇 IV', price:30 },
-    { game:'原神', category:'魔神任务', name:'枫丹篇 V', price:50 },
-    { game:'原神', category:'魔神任务', name:'间章·睡前', price:30 },
+    // --- 魔神任务·蒙德 ---
+    { game:'原神', category:'魔神任务', name:'蒙德·第一幕 捕风的异乡人', price:20 },
+    { game:'原神', category:'魔神任务', name:'蒙德·第二幕 为了没有眼泪的明天', price:20 },
+    { game:'原神', category:'魔神任务', name:'蒙德·第三幕 巨龙与自由之歌', price:20 },
+    // --- 魔神任务·璃月 ---
+    { game:'原神', category:'魔神任务', name:'璃月·第一幕 浮生浮世千年间', price:20 },
+    { game:'原神', category:'魔神任务', name:'璃月·第二幕 辞行久远之躯', price:20 },
+    { game:'原神', category:'魔神任务', name:'璃月·第三幕 迫近的客星', price:35 },
+    { game:'原神', category:'魔神任务', name:'璃月·序幕 戴因斯雷布', price:20 },
+    { game:'原神', category:'魔神任务', name:'璃月·第四幕 我们终将重逢', price:25 },
+    // --- 魔神任务·稻妻 ---
+    { game:'原神', category:'魔神任务', name:'稻妻·序幕 振袖秋风问红叶', price:20 },
+    { game:'原神', category:'魔神任务', name:'稻妻·第一幕 不动神明 恒长乐园', price:30 },
+    { game:'原神', category:'魔神任务', name:'稻妻·第二幕 无念无想泡影断灭', price:40 },
+    { game:'原神', category:'魔神任务', name:'稻妻·第三幕 千手百眼天下人间', price:30 },
+    { game:'原神', category:'魔神任务', name:'稻妻·第四幕 回响深渊的安魂曲', price:25 },
+    { game:'原神', category:'魔神任务', name:'间章·风起鹤归', price:20 },
+    { game:'原神', category:'魔神任务', name:'间章·危途迷踪', price:30 },
+    // --- 魔神任务·须弥 ---
+    { game:'原神', category:'魔神任务', name:'须弥·第一幕 穿过烟帷与暗林', price:40 },
+    { game:'原神', category:'魔神任务', name:'须弥·第二幕 千朵玫瑰带来的黎明', price:35 },
+    { game:'原神', category:'魔神任务', name:'须弥·第三幕 迷幻与梦幻的欺骗', price:40 },
+    { game:'原神', category:'魔神任务', name:'须弥·第四幕 赤王之主与三朝圣者', price:30 },
+    { game:'原神', category:'魔神任务', name:'须弥·第五幕 虚空鼓动劫火高扬', price:50 },
+    { game:'原神', category:'魔神任务', name:'间章·倾落湛蓝', price:30 },
+    { game:'原神', category:'魔神任务', name:'须弥·第六幕 卡利贝尔', price:30 },
+    // --- 魔神任务·枫丹 ---
+    { game:'原神', category:'魔神任务', name:'枫丹·第一幕 白露与黑潮的序诗', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹·第二幕 仿若无因飘落的轻雨', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹·第三幕 向深水中的晨星', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹·第四幕 谕示胎动的终焉之刻', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹·第五幕 罪人舞步旋', price:50 },
+    { game:'原神', category:'魔神任务', name:'间章·睡前故事', price:30 },
+    // --- 魔神任务·纳塔 ---
+    { game:'原神', category:'魔神任务', name:'纳塔·第一幕 荣花与炎日之途', price:40 },
+    { game:'原神', category:'魔神任务', name:'纳塔·第二幕 黑石湮落白石下', price:30 },
+    { game:'原神', category:'魔神任务', name:'纳塔·第三幕 镜与迷烟的彼方', price:30 },
+    { game:'原神', category:'魔神任务', name:'纳塔·间章 万火归一', price:20 },
+    { game:'原神', category:'魔神任务', name:'纳塔·第五幕 炽热的还魂诗', price:50 },
     // --- 世界任务 ---
     { game:'原神', category:'世界任务', name:'传说任务', price:15 },
     { game:'原神', category:'世界任务', name:'邀约任务', price:15 },
     { game:'原神', category:'世界任务', name:'世界任务（5r起）', price:5 },
     // --- 大型世界任务 ---
     { game:'原神', category:'大型世界任务', name:'森林书', price:180 },
-    { game:'原神', category:'大型世界任务', name:'森林书·后续', price:20 },
+    { game:'原神', category:'大型世界任务', name:'森林书·后续', price:30 },
     { game:'原神', category:'大型世界任务', name:'76兰那罗', price:50 },
     { game:'原神', category:'大型世界任务', name:'神樱大祓', price:40 },
-    { game:'原神', category:'大型世界任务', name:'海洋书', price:60 },
     { game:'原神', category:'大型世界任务', name:'沙漠书', price:60 },
     { game:'原神', category:'大型世界任务', name:'沙漠书·后续', price:30 },
-    { game:'原神', category:'大型世界任务', name:'监狱书', price:60 },
     { game:'原神', category:'大型世界任务', name:'沙地书', price:60 },
     { game:'原神', category:'大型世界任务', name:'沙地书·后续', price:30 },
+    { game:'原神', category:'大型世界任务', name:'花神书', price:80 },
+    { game:'原神', category:'大型世界任务', name:'花神书·后续', price:30 },
+    { game:'原神', category:'大型世界任务', name:'海洋书', price:60 },
+    { game:'原神', category:'大型世界任务', name:'监狱书', price:60 },
     // --- 活动类 ---
     { game:'原神', category:'活动类', name:'大活动', price:50 },
     { game:'原神', category:'活动类', name:'小活动', price:15 },
   ];
+
+  // ==================== 异环默认价格数据 ====================
+  const DEFAULT_YIHUAN_PRICES = [
+    // --- 版本任务 ---
+    { game:'异环', category:'版本任务', name:'主线任务', price:40 },
+    { game:'异环', category:'版本任务', name:'999夜·限时奖励', price:35 },
+    { game:'异环', category:'版本任务', name:'999夜·清空商店（主线+限时奖励+清空纽扣商店）', price:350 },
+    // --- 地图收集 ---
+    { game:'异环', category:'地图收集', name:'地图全收集（1.0+1.1）', price:330 },
+    { game:'异环', category:'地图收集', name:'1.0 地图全收集', price:300 },
+    { game:'异环', category:'地图收集', name:'1.1 地图全收集', price:30 },
+    { game:'异环', category:'地图收集', name:'粉爪大劫案（每期）', price:25 },
+    // --- 日常托管 ---
+    { game:'异环', category:'日常托管', name:'日常套餐（每日活跃打满）', price:35 },
+    { game:'异环', category:'日常托管', name:'日体套餐（每日活跃+每日体力+周本）', price:70 },
+    { game:'异环', category:'日常托管', name:'精托套餐（日体套餐+期间活动+都市活力）', price:150 },
+    { game:'异环', category:'日常托管', name:'全托套餐（精托套餐+每期粉爪）', price:240 },
+    { game:'异环', category:'日常托管', name:'至尊套餐（全托套餐+规划体力精致养号+深渊）', price:350 },
+    // --- 开荒套餐 ---
+    { game:'异环', category:'开荒套餐', name:'⭐ 开荒套餐1（主线全清+解锁全图传送点·留卡等级）', price:868 },
+    { game:'异环', category:'开荒套餐', name:'⭐ 开荒套餐2（任务全清+解锁全图传送点）', price:1288 },
+    { game:'异环', category:'开荒套餐', name:'⭐ 开荒套餐3（全任务+全传送点+地图全收集）', price:1688 },
+    { game:'异环', category:'开荒套餐', name:'✧ 至尊开荒（全主线+全支线+全收集+全活动+都市玩法毕业）', price:2088 },
+  ];
+
+  // ==================== 鸣潮默认价格数据 ====================
+  const DEFAULT_MINGCHAO_PRICES = [
+    // --- 托管类 ---
+    { game:'鸣潮', category:'托管类', name:'日常体力（体力指定）', price:30 },
+    { game:'鸣潮', category:'托管类', name:'精托·可指定（日常体力+期间活动+肉鸽+电台满级）', price:100 },
+    { game:'鸣潮', category:'托管类', name:'账号全托（精托+海虚+角色养成+账号规划·免费帮打36残像）', price:240 },
+    // --- 挑战内容 ---
+    { game:'鸣潮', category:'挑战内容', name:'冥歌海墟', price:10 },
+    { game:'鸣潮', category:'挑战内容', name:'深塔', price:10 },
+    { game:'鸣潮', category:'挑战内容', name:'千道门扉的异想', price:3 },
+    // --- 探索度·全收集 ---
+    { game:'鸣潮', category:'探索度·全收集', name:'100%全收集（含危行任务·不含主线）', price:100 },
+    { game:'鸣潮', category:'探索度·全收集', name:'瑝珑区域全收集（瑝珑+黑海岸）', price:390 },
+    { game:'鸣潮', category:'探索度·全收集', name:'黎那汐塔全收集', price:460 },
+    { game:'鸣潮', category:'探索度·全收集', name:'3.0版本·罗伊伊原全收集', price:160 },
+    { game:'鸣潮', category:'探索度·全收集', name:'3.1版本·罗伊冰原全收集', price:60 },
+    { game:'鸣潮', category:'探索度·全收集', name:'3.3版本·罗伊冰原全收集', price:65 },
+    // --- 探索度·瑝珑区域 ---
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'云陵谷', price:20 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'无明湾', price:20 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'今州城', price:20 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'北落野', price:20 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'中曲台地', price:49 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'怨鸟泽', price:35 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'荒石高地', price:40 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'虎口山脉', price:30 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'归墟港市', price:30 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'乘霄山', price:55 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'无光之森', price:30 },
+    { game:'鸣潮', category:'探索度·瑝珑区域', name:'黑海岸', price:50 },
+    // --- 探索度·黎那汐塔 ---
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'拉古那城', price:5 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'檀生半岛', price:30 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'埃弗拉金库', price:20 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'狄萨莱海脊', price:20 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'悲叹墓岛', price:25 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'黎那利群岛', price:20 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'赞祷圣迹', price:30 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'下层金库', price:30 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'佛风水畔', price:25 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'阿维纽林', price:45 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'氪探水境', price:25 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'贝奥海域', price:25 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'七丘', price:80 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'隐海试炼场', price:25 },
+    { game:'鸣潮', category:'探索度·黎那汐塔', name:'桑古伊斯狩场', price:45 },
+    // --- 声骸类 ---
+    { game:'鸣潮', category:'声骸类', name:'锄大地（可指定·每小时）', price:20 },
+    { game:'鸣潮', category:'声骸类', name:'毕业声骸全套（属性双爆+两个有效词条）', price:325 },
+    { game:'鸣潮', category:'声骸类', name:'单/双爆声骸（一套）', price:200 },
+    { game:'鸣潮', category:'声骸类', name:'数据坞·25级全包', price:200 },
+    // --- 任务活动 ---
+    { game:'鸣潮', category:'任务活动', name:'主线任务（每幕）', price:25 },
+    { game:'鸣潮', category:'任务活动', name:'伴星任务', price:15 },
+    { game:'鸣潮', category:'任务活动', name:'危行任务', price:10 },
+    { game:'鸣潮', category:'任务活动', name:'纪闻任务', price:5 },
+    { game:'鸣潮', category:'任务活动', name:'大活动', price:50 },
+    { game:'鸣潮', category:'任务活动', name:'小活动', price:15 },
+    // --- 常驻活动 ---
+    { game:'鸣潮', category:'常驻活动', name:'老人与海', price:50 },
+    { game:'鸣潮', category:'常驻活动', name:'团团团团转', price:40 },
+    { game:'鸣潮', category:'常驻活动', name:'幻梦游乐园', price:30 },
+    { game:'鸣潮', category:'常驻活动', name:'浸梦海床', price:60 },
+    { game:'鸣潮', category:'常驻活动', name:'失序梦途', price:30 },
+    { game:'鸣潮', category:'常驻活动', name:'激斗！向着荣耀之丘', price:30 },
+    { game:'鸣潮', category:'常驻活动', name:'荣耀之丘·激斗重燃', price:35 },
+    { game:'鸣潮', category:'常驻活动', name:'潮蚀模拟', price:50 },
+    { game:'鸣潮', category:'常驻活动', name:'穗波怪异物语', price:35 },
+    { game:'鸣潮', category:'常驻活动', name:'旌旗不落', price:25 },
+  ];
+
+  // 所有游戏默认价格合集（新增游戏在这里追加）
+  const ALL_DEFAULT_PRICES = [...DEFAULT_GENSHIN_PRICES, ...DEFAULT_YIHUAN_PRICES, ...DEFAULT_MINGCHAO_PRICES];
 
   const $  = (s) => document.querySelector(s);
   const $$ = (s) => document.querySelectorAll(s);
@@ -1276,10 +1643,17 @@ tbody tr:hover { background: #f8fcff; }
   function renderPreviews(container, arr, removable) {
     container.innerHTML = arr.map((b64, i) => `
       <div class="thumb">
-        <img src="${b64}" alt="图${i+1}" onclick="window._showLightbox('${b64}')">
+        <img src="${escAttr(b64)}" alt="图${i+1}" data-lightbox="${escAttr(b64)}" class="thumb-img-preview">
         ${removable ? `<button class="remove-thumb" data-i="${i}">&times;</button>` : ''}
       </div>
     `).join('');
+    // 缩略图点击 → lightbox（事件委托，避免 base64 塞进 onclick）
+    container.querySelectorAll('.thumb-img-preview').forEach(img => {
+      img.addEventListener('click', function() {
+        const src = this.dataset.lightbox;
+        if (src) window._showLightbox(src);
+      });
+    });
     if (removable) {
       container.querySelectorAll('.remove-thumb').forEach(btn => {
         btn.onclick = function(e) { e.stopPropagation(); arr.splice(+this.dataset.i, 1); renderPreviews(container, arr, true); };
@@ -1289,10 +1663,23 @@ tbody tr:hover { background: #f8fcff; }
   function setupDropzone(dz, fi, pv, arr) {
     dz.addEventListener('click', () => fi.click());
     fi.addEventListener('change', async () => {
-      for (const f of Array.from(fi.files)) {
+      const files = Array.from(fi.files);
+      for (const f of files) {
         if (arr.length >= 3) { toast('最多上传 3 张哦~'); break; }
         if (!f.type.startsWith('image/')) continue;
-        arr.push(await file2b64(f));
+        try {
+          const b64 = await file2b64(f);
+          const sizeMB = (b64.length / 1024 / 1024).toFixed(1);
+          if (b64.length > 15 * 1024 * 1024) {
+            toast(`⚠️ ${f.name} 太大（${sizeMB} MB），请压缩到 15 MB 以内`);
+            continue;
+          }
+          arr.push(b64);
+          toast(`📎 ${f.name}（${sizeMB} MB）`);
+        } catch (err) {
+          console.error('读取图片失败:', f.name, err);
+          toast(`❌ 读取 ${f.name} 失败`);
+        }
       }
       fi.value = ''; renderPreviews(pv, arr, true);
     });
@@ -1303,7 +1690,19 @@ tbody tr:hover { background: #f8fcff; }
       for (const f of Array.from(e.dataTransfer.files)) {
         if (arr.length >= 3) { toast('最多上传 3 张哦~'); break; }
         if (!f.type.startsWith('image/')) continue;
-        arr.push(await file2b64(f));
+        try {
+          const b64 = await file2b64(f);
+          const sizeMB = (b64.length / 1024 / 1024).toFixed(1);
+          if (b64.length > 15 * 1024 * 1024) {
+            toast(`⚠️ ${f.name} 太大（${sizeMB} MB），请压缩到 15 MB 以内`);
+            continue;
+          }
+          arr.push(b64);
+          toast(`📎 ${f.name}（${sizeMB} MB）`);
+        } catch (err) {
+          console.error('读取图片失败:', f.name, err);
+          toast(`❌ 读取 ${f.name} 失败`);
+        }
       }
       renderPreviews(pv, arr, true);
     });
@@ -1340,14 +1739,22 @@ tbody tr:hover { background: #f8fcff; }
       return;
     }
     container.innerHTML = priceImgs.map(img => `
-      <div class="price-img-card" onclick="window._showLightbox('${img.data_url || img.dataUrl}')">
-        <img src="${img.data_url || img.dataUrl}" alt="价格表">
+      <div class="price-img-card" data-lightbox="${escAttr(img.dataUrl || img.data_url || '')}">
+        <img src="${escAttr(img.dataUrl || img.data_url || '')}" alt="价格表" loading="lazy">
         <div class="img-label">
           <span>📄 ${escHtml(img.name)}</span>
           ${showDelete ? `<button onclick="event.stopPropagation();window._deletePriceImg('${img.id}')" title="删除">🗑️</button>` : ''}
         </div>
       </div>
     `).join('');
+    // 事件委托：点击卡片时从 data-lightbox 读取 src，避免把几 MB 的 base64 塞进 onclick 导致 DOM 解析崩溃
+    container.querySelectorAll('.price-img-card').forEach(card => {
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('button')) return; // 不拦截删除按钮
+        const src = this.dataset.lightbox;
+        if (src) window._showLightbox(src);
+      });
+    });
   }
 
   // ==================== 文字价格渲染 ====================
@@ -1401,7 +1808,7 @@ tbody tr:hover { background: #f8fcff; }
     const catTabsEl = $('#categoryTabs');
 
     // 合并默认数据 + 数据库价格列表
-    const merged = [...DEFAULT_GENSHIN_PRICES];
+    const merged = [...ALL_DEFAULT_PRICES];
     priceList.forEach(p => {
       if (!merged.some(m => m.game === p.game && m.name === p.name)) {
         merged.push({ game: p.game, category: p.category || '其他', name: p.name, price: p.price, id: p.id });
@@ -1565,10 +1972,17 @@ tbody tr:hover { background: #f8fcff; }
     if (priceImgs.length) {
       imgContainer.innerHTML = '<div class="card"><div class="card-header">🖼️ 图片价格表（点击放大）</div><div class="price-img-grid">' +
         priceImgs.map(img => `
-          <div class="price-img-card" onclick="window._showLightbox('${img.data_url || img.dataUrl}')">
-            <img src="${img.data_url || img.dataUrl}" alt="价格表"><div class="img-label"><span>📄 ${escHtml(img.name)}</span></div>
+          <div class="price-img-card" data-lightbox="${escAttr(img.dataUrl || img.data_url || '')}">
+            <img src="${escAttr(img.dataUrl || img.data_url || '')}" alt="价格表" loading="lazy"><div class="img-label"><span>📄 ${escHtml(img.name)}</span></div>
           </div>
         `).join('') + '</div></div>';
+      // 事件委托：避免 base64 撑爆 onclick 属性
+      imgContainer.querySelectorAll('.price-img-card').forEach(card => {
+        card.addEventListener('click', function() {
+          const src = this.dataset.lightbox;
+          if (src) window._showLightbox(src);
+        });
+      });
     } else {
       imgContainer.innerHTML = '';
     }
@@ -1664,7 +2078,7 @@ tbody tr:hover { background: #f8fcff; }
         const isDone = o.isCompleted;
         const badge  = isDone ? '<span class="status-badge status-done">已完成</span>' : '<span class="status-badge status-pending">进行中</span>';
         const imgs = (o.images && o.images.length)
-          ? o.images.map((b,i) => `<img src="${b}" alt="图${i+1}" onclick="event.stopPropagation();window._showLightbox('${b}')">`).join('')
+          ? o.images.map((b,i) => `<img src="${escAttr(b)}" alt="图${i+1}" data-lightbox="${escAttr(b)}" class="thumb-img">`).join('')
           : '<span class="no-img">无</span>';
         // 手机号处理：API 模式下非管理员已经是脱敏的，本地模式按开关脱敏
         const phoneDisplay = (apiMode && !isAdmin()) ? o.phone : maskPhone(o.phone, hide);
@@ -1684,6 +2098,15 @@ tbody tr:hover { background: #f8fcff; }
           </div></td>
         </tr>`;
       }).join('');
+
+      // 缩略图点击 → lightbox（事件委托，避免 base64 塞进 onclick）
+      tbody.querySelectorAll('.thumb-img').forEach(img => {
+        img.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const src = this.dataset.lightbox;
+          if (src) window._showLightbox(src);
+        });
+      });
 
       if (canEdit) {
         tbody.querySelectorAll('[data-act="toggle"]').forEach(b => b.addEventListener('click', () => toggleComplete(b.dataset.id)));
@@ -1843,29 +2266,57 @@ tbody tr:hover { background: #f8fcff; }
   });
   pInput.addEventListener('change', async e => {
     if (apiMode && !isAdmin()) { toast('需要管理员权限'); e.target.value = ''; return; }
-    for (const f of Array.from(e.target.files)) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    let ok = 0, fail = 0;
+    for (const f of files) {
       if (!f.type.startsWith('image/')) continue;
-      await apiAddPriceImg(await file2b64(f), f.name || '价格表');
+      try {
+        const b64 = await file2b64(f);
+        toast(`正在上传 ${f.name}（${(b64.length/1024/1024).toFixed(1)} MB）...`);
+        await apiAddPriceImg(b64, f.name || '价格表');
+        ok++;
+      } catch (err) {
+        fail++;
+        console.error('上传失败:', f.name, err);
+        toast(`❌ ${f.name} 上传失败: ${err.message}`);
+      }
     }
     e.target.value = '';
-    await refreshAllData();
-    renderPriceManage();
-    renderCustomerOrder();
-    toast('价格表图片已上传~');
+    if (ok > 0) {
+      await refreshAllData();
+      renderPriceManage();
+      renderCustomerOrder();
+      toast(`✅ 成功上传 ${ok} 张${fail > 0 ? `，${fail} 张失败` : ''}`);
+    }
   });
   pd.addEventListener('dragover', e => { e.preventDefault(); pd.classList.add('dragover'); });
   pd.addEventListener('dragleave', () => pd.classList.remove('dragover'));
   pd.addEventListener('drop', async e => {
     e.preventDefault(); pd.classList.remove('dragover');
     if (apiMode && !isAdmin()) { toast('需要管理员权限'); return; }
-    for (const f of Array.from(e.dataTransfer.files)) {
+    const files = Array.from(e.dataTransfer.files);
+    if (!files.length) return;
+    let ok = 0, fail = 0;
+    for (const f of files) {
       if (!f.type.startsWith('image/')) continue;
-      await apiAddPriceImg(await file2b64(f), f.name || '价格表');
+      try {
+        const b64 = await file2b64(f);
+        toast(`正在上传 ${f.name}（${(b64.length/1024/1024).toFixed(1)} MB）...`);
+        await apiAddPriceImg(b64, f.name || '价格表');
+        ok++;
+      } catch (err) {
+        fail++;
+        console.error('拖拽上传失败:', f.name, err);
+        toast(`❌ ${f.name} 上传失败: ${err.message}`);
+      }
     }
-    await refreshAllData();
-    renderPriceManage();
-    renderCustomerOrder();
-    toast('价格表图片已上传~');
+    if (ok > 0) {
+      await refreshAllData();
+      renderPriceManage();
+      renderCustomerOrder();
+      toast(`✅ 成功上传 ${ok} 张${fail > 0 ? `，${fail} 张失败` : ''}`);
+    }
   });
 
   // Price item form
