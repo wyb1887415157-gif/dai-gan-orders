@@ -177,6 +177,26 @@ body.has-bg::before {
 }
 .price-card.flash { border-color: var(--accent); background: #fef9fb; animation: highlightPulse 0.5s ease; }
 
+/* ===== Game & category tabs ===== */
+.game-tabs {
+  display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; border-bottom: 1px solid var(--card-border); margin-bottom: 6px;
+}
+.game-tab {
+  padding: 5px 14px; border-radius: 16px; border: 1.5px solid var(--card-border); background: #fff;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s; color: var(--text);
+}
+.game-tab:hover { border-color: var(--primary-light); background: #f8f4ff; }
+.game-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.category-tabs {
+  display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 0 8px 0; margin-bottom: 4px;
+}
+.cat-tab {
+  padding: 3px 10px; border-radius: 12px; border: 1px solid #e8e0f0; background: #faf8fc;
+  font-size: 0.75rem; cursor: pointer; transition: all 0.15s; color: var(--text-muted);
+}
+.cat-tab:hover { color: var(--primary-dark); border-color: var(--primary-lighter); }
+.cat-tab.active { background: var(--primary-lighter); color: var(--primary-dark); border-color: var(--primary-light); font-weight: 600; }
+
 /* ===== Inline form ===== */
 .inline-form {
   display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; padding: 12px 14px;
@@ -437,6 +457,29 @@ tbody tr:hover { background: #f8fcff; }
         <div id="orderPriceImgs"></div>
         <div class="card" style="margin-top:12px;">
           <div class="card-header">📋 文字价格表 — 点击 <span style="color:var(--accent);">➕</span> 加入订单</div>
+          <!-- 游戏分类标签 -->
+          <div class="game-tabs" id="gameTabs">
+            <button class="game-tab active" data-game="原神">🎮 原神</button>
+            <button class="game-tab" data-game="异环">🎮 异环</button>
+            <button class="game-tab" data-game="终末地">🎮 终末地</button>
+            <button class="game-tab" data-game="绝区零">🎮 绝区零</button>
+            <button class="game-tab" data-game="鸣潮">🎮 鸣潮</button>
+            <button class="game-tab" data-game="崩铁">🎮 崩铁</button>
+          </div>
+          <!-- 原神子分类标签 -->
+          <div class="category-tabs" id="categoryTabs" style="display:flex;">
+            <button class="cat-tab active" data-cat="全部">全部</button>
+            <button class="cat-tab" data-cat="托管类">托管类</button>
+            <button class="cat-tab" data-cat="地图探索">地图探索</button>
+            <button class="cat-tab" data-cat="神瞳类">神瞳类</button>
+            <button class="cat-tab" data-cat="魔神任务">魔神任务</button>
+            <button class="cat-tab" data-cat="世界任务">世界任务</button>
+            <button class="cat-tab" data-cat="大型世界任务">大型世界任务</button>
+            <button class="cat-tab" data-cat="活动类">活动类</button>
+            <button class="cat-tab" data-cat="钓鱼武器">钓鱼武器</button>
+            <button class="cat-tab" data-cat="材料类">材料类</button>
+            <button class="cat-tab" data-cat="角色培养">角色培养</button>
+          </div>
           <div class="price-grid" id="orderPriceGrid">
             <div class="empty-state"><span class="empty-icon">📭</span>还没有文字价格项目</div>
           </div>
@@ -826,6 +869,117 @@ tbody tr:hover { background: #f8fcff; }
   let formImages   = [];
   let editImages   = [];
   let coImages     = [];
+  let customerGame = '原神';       // 客户面板当前选中的游戏
+  let customerCat  = '全部';       // 客户面板当前选中的分类
+
+  // ==================== 原神默认价格数据（按分类组织） ====================
+  const DEFAULT_GENSHIN_PRICES = [
+    // --- 托管类 ---
+    { game:'原神', category:'托管类', name:'每日委托（按天）', price:1.5 },
+    { game:'原神', category:'托管类', name:'每日委托（包月）', price:40 },
+    { game:'原神', category:'托管类', name:'每日体力（按天）', price:2 },
+    { game:'原神', category:'托管类', name:'每日体力（包月）', price:50 },
+    { game:'原神', category:'托管类', name:'委托+体力（按天）', price:2.5 },
+    { game:'原神', category:'托管类', name:'委托+体力（包月·副本自选）', price:70 },
+    { game:'原神', category:'托管类', name:'普托（委托+体力+大小活动）', price:160 },
+    { game:'原神', category:'托管类', name:'全托（体委+大小活动+纪行+声望+深渊+周本+派遣）', price:220 },
+    { game:'原神', category:'托管类', name:'全包（全托+角色培育）', price:300 },
+    // --- 角色培养 ---
+    { game:'原神', category:'角色培养', name:'角色小毕业', price:160 },
+    { game:'原神', category:'角色培养', name:'角色大毕业（从零开始）', price:320 },
+    // --- 钓鱼武器 ---
+    { game:'原神', category:'钓鱼武器', name:'鱼叉·满精本体', price:25 },
+    { game:'原神', category:'钓鱼武器', name:'鱼叉·后续每精', price:15 },
+    { game:'原神', category:'钓鱼武器', name:'水管·满精本体', price:20 },
+    { game:'原神', category:'钓鱼武器', name:'水管·后续每精', price:10 },
+    { game:'原神', category:'钓鱼武器', name:'鱼弓·满精本体', price:20 },
+    { game:'原神', category:'钓鱼武器', name:'鱼弓·后续每精', price:10 },
+    // --- 材料类 ---
+    { game:'原神', category:'材料类', name:'采集材料（0.1r起/个）', price:0.1 },
+    { game:'原神', category:'材料类', name:'掉落材料·小', price:0.1 },
+    { game:'原神', category:'材料类', name:'掉落材料·中', price:0.2 },
+    { game:'原神', category:'材料类', name:'掉落材料·大', price:0.5 },
+    { game:'原神', category:'材料类', name:'白铁矿（锻造材料）', price:0.1 },
+    // --- 地图探索 ---
+    { game:'原神', category:'地图探索', name:'蒙德·单区域满探索', price:40 },
+    { game:'原神', category:'地图探索', name:'蒙德·全包（含风神瞳）', price:160 },
+    { game:'原神', category:'地图探索', name:'雪山·满探索（含绯红玉髓）', price:80 },
+    { game:'原神', category:'地图探索', name:'雪山·前置任务', price:40 },
+    { game:'原神', category:'地图探索', name:'璃月·单区域', price:60 },
+    { game:'原神', category:'地图探索', name:'璃月·全包（含岩神瞳+古云有螭）', price:300 },
+    { game:'原神', category:'地图探索', name:'层岩巨渊·上层', price:50 },
+    { game:'原神', category:'地图探索', name:'层岩巨渊·下层', price:100 },
+    { game:'原神', category:'地图探索', name:'稻妻·满探索（含雷神瞳+前置）', price:160 },
+    { game:'原神', category:'地图探索', name:'稻妻·前置任务', price:40 },
+    { game:'原神', category:'地图探索', name:'渊下宫·完整', price:90 },
+    { game:'原神', category:'地图探索', name:'渊下宫·前置', price:40 },
+    { game:'原神', category:'地图探索', name:'渊下宫·键纹', price:30 },
+    { game:'原神', category:'地图探索', name:'须弥雨林·单区域', price:60 },
+    { game:'原神', category:'地图探索', name:'须弥雨林·全包（森林书）', price:300 },
+    { game:'原神', category:'地图探索', name:'须弥沙漠3.1·单区域', price:70 },
+    { game:'原神', category:'地图探索', name:'须弥沙漠3.1·全包', price:200 },
+    { game:'原神', category:'地图探索', name:'须弥千壑沙地', price:160 },
+    { game:'原神', category:'地图探索', name:'须弥沙漠3.6', price:200 },
+    { game:'原神', category:'地图探索', name:'枫丹4.0', price:240 },
+    { game:'原神', category:'地图探索', name:'枫丹4.1', price:200 },
+    { game:'原神', category:'地图探索', name:'纳塔5.0', price:180 },
+    { game:'原神', category:'地图探索', name:'纳塔5.2', price:140 },
+    { game:'原神', category:'地图探索', name:'挪德卡莱6.0', price:220 },
+    { game:'原神', category:'地图探索', name:'挪德卡莱6.3', price:150 },
+    { game:'原神', category:'地图探索', name:'挪德卡莱6.7（多退少补）', price:180 },
+    // --- 神瞳类 ---
+    { game:'原神', category:'神瞳类', name:'风神瞳', price:30 },
+    { game:'原神', category:'神瞳类', name:'岩神瞳', price:60 },
+    { game:'原神', category:'神瞳类', name:'雷神瞳', price:80 },
+    { game:'原神', category:'神瞳类', name:'草神瞳', price:130 },
+    { game:'原神', category:'神瞳类', name:'水神瞳', price:130 },
+    { game:'原神', category:'神瞳类', name:'火神瞳', price:130 },
+    { game:'原神', category:'神瞳类', name:'月神瞳', price:100 },
+    { game:'原神', category:'神瞳类', name:'绯红玉髓', price:40 },
+    // --- 魔神任务 ---
+    { game:'原神', category:'魔神任务', name:'蒙德篇 I', price:20 },
+    { game:'原神', category:'魔神任务', name:'蒙德篇 II', price:20 },
+    { game:'原神', category:'魔神任务', name:'蒙德篇 III', price:20 },
+    { game:'原神', category:'魔神任务', name:'璃月篇 I', price:20 },
+    { game:'原神', category:'魔神任务', name:'璃月篇 II', price:20 },
+    { game:'原神', category:'魔神任务', name:'璃月篇 III', price:20 },
+    { game:'原神', category:'魔神任务', name:'璃月篇 IV', price:25 },
+    { game:'原神', category:'魔神任务', name:'稻妻篇 序幕', price:20 },
+    { game:'原神', category:'魔神任务', name:'稻妻篇 I', price:30 },
+    { game:'原神', category:'魔神任务', name:'稻妻篇 II', price:40 },
+    { game:'原神', category:'魔神任务', name:'稻妻篇 III', price:25 },
+    { game:'原神', category:'魔神任务', name:'间章·鹤归', price:20 },
+    { game:'原神', category:'魔神任务', name:'间章·迷踪', price:30 },
+    { game:'原神', category:'魔神任务', name:'须弥篇 I', price:40 },
+    { game:'原神', category:'魔神任务', name:'须弥篇 II', price:20 },
+    { game:'原神', category:'魔神任务', name:'须弥篇 III', price:30 },
+    { game:'原神', category:'魔神任务', name:'须弥篇 IV', price:30 },
+    { game:'原神', category:'魔神任务', name:'须弥篇 V', price:50 },
+    { game:'原神', category:'魔神任务', name:'枫丹篇 I', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹篇 II', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹篇 III', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹篇 IV', price:30 },
+    { game:'原神', category:'魔神任务', name:'枫丹篇 V', price:50 },
+    { game:'原神', category:'魔神任务', name:'间章·睡前', price:30 },
+    // --- 世界任务 ---
+    { game:'原神', category:'世界任务', name:'传说任务', price:15 },
+    { game:'原神', category:'世界任务', name:'邀约任务', price:15 },
+    { game:'原神', category:'世界任务', name:'世界任务（5r起）', price:5 },
+    // --- 大型世界任务 ---
+    { game:'原神', category:'大型世界任务', name:'森林书', price:180 },
+    { game:'原神', category:'大型世界任务', name:'森林书·后续', price:20 },
+    { game:'原神', category:'大型世界任务', name:'76兰那罗', price:50 },
+    { game:'原神', category:'大型世界任务', name:'神樱大祓', price:40 },
+    { game:'原神', category:'大型世界任务', name:'海洋书', price:60 },
+    { game:'原神', category:'大型世界任务', name:'沙漠书', price:60 },
+    { game:'原神', category:'大型世界任务', name:'沙漠书·后续', price:30 },
+    { game:'原神', category:'大型世界任务', name:'监狱书', price:60 },
+    { game:'原神', category:'大型世界任务', name:'沙地书', price:60 },
+    { game:'原神', category:'大型世界任务', name:'沙地书·后续', price:30 },
+    // --- 活动类 ---
+    { game:'原神', category:'活动类', name:'大活动', price:50 },
+    { game:'原神', category:'活动类', name:'小活动', price:15 },
+  ];
 
   const $  = (s) => document.querySelector(s);
   const $$ = (s) => document.querySelectorAll(s);
@@ -838,6 +992,7 @@ tbody tr:hover { background: #f8fcff; }
     return p;
   }
   function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function toast(msg) {
     const t = $('#toast'); t.textContent = msg; t.classList.add('show');
     clearTimeout(t._tid); t._tid = setTimeout(() => t.classList.remove('show'), 2000);
@@ -1240,6 +1395,76 @@ tbody tr:hover { background: #f8fcff; }
     });
   }
 
+  // ==================== 客户面板价格渲染（游戏+分类筛选） ====================
+  function renderCustomerPriceGrid() {
+    const container = $('#orderPriceGrid');
+    const catTabsEl = $('#categoryTabs');
+
+    // 合并默认数据 + 数据库价格列表
+    const merged = [...DEFAULT_GENSHIN_PRICES];
+    priceList.forEach(p => {
+      if (!merged.some(m => m.game === p.game && m.name === p.name)) {
+        merged.push({ game: p.game, category: p.category || '其他', name: p.name, price: p.price, id: p.id });
+      } else if (p.id) {
+        const m = merged.find(m => m.game === p.game && m.name === p.name);
+        if (m) m.id = p.id;
+      }
+    });
+
+    // 按游戏筛选
+    let filtered = merged.filter(p => p.game === customerGame);
+
+    // 仅原神显示分类标签
+    if (customerGame === '原神') {
+      catTabsEl.style.display = 'flex';
+      if (customerCat !== '全部') {
+        filtered = filtered.filter(p => p.category === customerCat);
+      }
+    } else {
+      catTabsEl.style.display = 'none';
+    }
+
+    if (!filtered.length) {
+      const hasAnyGame = merged.some(p => p.game === customerGame);
+      container.innerHTML = `<div class="empty-state"><span class="empty-icon">📭</span>${hasAnyGame ? '该分类暂无价格项目' : '该游戏暂无价格项目，敬请期待~'}</div>`;
+      return;
+    }
+
+    // 按分类分组
+    const groups = {};
+    filtered.forEach(item => {
+      const cat = item.category || '其他';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(item);
+    });
+
+    let html = '';
+    for (const [cat, items] of Object.entries(groups)) {
+      html += `<div style="grid-column:1/-1;font-weight:700;color:var(--primary-dark);font-size:0.85rem;margin-top:6px;padding:4px 0;border-bottom:1px solid #f0eafa;">📌 ${escHtml(cat)}</div>`;
+      items.forEach(item => {
+        html += `<div class="price-card">
+          <div class="price-info">
+            <div class="price-name">${escHtml(item.name)}</div>
+            <div class="price-value">${fmtMoney(item.price)}</div>
+          </div>
+          <button class="btn-add-item" data-act="add-cart-customer" data-name="${escAttr(item.name)}" data-price="${item.price}" data-game="${escAttr(item.game)}" title="加入订单">➕</button>
+        </div>`;
+      });
+    }
+    container.innerHTML = html;
+
+    container.querySelectorAll('[data-act="add-cart-customer"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const game  = btn.dataset.game;
+        const name  = btn.dataset.name;
+        const price = +btn.dataset.price;
+        cartItems.push({ cartId: genId(), game, name, price });
+        renderCart();
+        toast(`已加入：${name}`);
+      });
+    });
+  }
+
   function resetPriceForm() {
     $('#pfGame').value = ''; $('#pfName').value = ''; $('#pfPrice').value = '';
     $('#pfEditId').style.display = 'none'; $('#pfEditId').textContent = '';
@@ -1347,8 +1572,8 @@ tbody tr:hover { background: #f8fcff; }
     } else {
       imgContainer.innerHTML = '';
     }
-    // 文字价格
-    renderPriceGrid($('#orderPriceGrid'), priceList, false);
+    // 文字价格（游戏+分类筛选）
+    renderCustomerPriceGrid();
     renderCart();
   }
 
@@ -1585,6 +1810,25 @@ tbody tr:hover { background: #f8fcff; }
   // ==================== 事件绑定 ====================
   // Tabs
   $$('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+  // 客户面板 - 游戏标签切换
+  $$('.game-tab').forEach(btn => btn.addEventListener('click', () => {
+    $$('.game-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    customerGame = btn.dataset.game;
+    customerCat = '全部';
+    // 重置分类标签
+    $$('.cat-tab').forEach(b => b.classList.toggle('active', b.dataset.cat === '全部'));
+    renderCustomerPriceGrid();
+  }));
+
+  // 客户面板 - 分类标签切换
+  $$('.cat-tab').forEach(btn => btn.addEventListener('click', () => {
+    $$('.cat-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    customerCat = btn.dataset.cat;
+    renderCustomerPriceGrid();
+  }));
 
   // Admin
   $('#adminLoginBtn').addEventListener('click', doAdminLogin);
