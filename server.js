@@ -343,7 +343,9 @@ app.get("/api/health", (req, res) => {
 // ==================== 价格表图片 ====================
 app.get("/api/price-images", async (req, res) => {
   try {
-    const [rows] = await db.execute("SELECT id, data_url, name, created FROM price_images ORDER BY created DESC");
+    // 去掉 ORDER BY，避免大图片排序撑爆 SQLPub 免费版 sort buffer
+    const [rows] = await db.execute("SELECT id, data_url, name, created FROM price_images");
+    rows.sort((a, b) => (b.created || '').localeCompare(a.created || ''));
     res.json(rows.map(r => ({ id: r.id, dataUrl: r.data_url, data_url: r.data_url, name: r.name, created: r.created })));
   } catch (e) {
     console.error("查询价格图片失败:", e.message);
@@ -385,7 +387,12 @@ app.delete("/api/price-images/:id", adminAuth, async (req, res) => {
 // ==================== 文字价格表 ====================
 app.get("/api/price-list", async (req, res) => {
   try {
-    const [rows] = await db.execute("SELECT id, game, name, price FROM price_list ORDER BY game ASC, created ASC");
+    const [rows] = await db.execute("SELECT id, game, name, price FROM price_list");
+    rows.sort((a, b) => {
+      const g = (a.game || '').localeCompare(b.game || '');
+      if (g !== 0) return g;
+      return (a.created || '').localeCompare(b.created || '');
+    });
     res.json(rows.map(r => ({ ...r, price: Number(r.price) })));
   } catch (e) {
     console.error("查询价格表失败:", e.message);
@@ -490,8 +497,13 @@ app.get("/api/orders", adminAuth, async (req, res) => {
       sql += " WHERE date LIKE ?";
       params.push(req.query.month + "%");
     }
-    sql += " ORDER BY date DESC, created DESC";
+    // 去掉 ORDER BY，避免大字段排序撑爆 SQLPub 免费版 sort buffer
     const [rows] = await db.execute(sql, params);
+    rows.sort((a, b) => {
+      const d = (b.date || '').localeCompare(a.date || '');
+      if (d !== 0) return d;
+      return (b.created || '').localeCompare(a.created || '');
+    });
     res.json(rows.map(rowToOrder));
   } catch (e) {
     console.error("查询订单失败:", e.message);
@@ -503,8 +515,13 @@ app.get("/api/orders", adminAuth, async (req, res) => {
 app.get("/api/orders/public", async (req, res) => {
   try {
     const [rows] = await db.execute(
-      "SELECT * FROM orders ORDER BY date DESC, created DESC LIMIT 50"
+      "SELECT * FROM orders LIMIT 50"
     );
+    rows.sort((a, b) => {
+      const d = (b.date || '').localeCompare(a.date || '');
+      if (d !== 0) return d;
+      return (b.created || '').localeCompare(a.created || '');
+    });
     res.json(rows.map(r => {
       const o = rowToOrder(r);
       o.phone = maskPhone(o.phone);
