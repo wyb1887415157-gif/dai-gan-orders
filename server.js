@@ -83,10 +83,21 @@ async function createMySQLBackend() {
     password: process.env.DB_PASSWORD || "",
     database: process.env.DB_NAME || "dai_gan",
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 5,
     charset: "utf8mb4",
+    connectTimeout: 10000,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 30000,
   };
   const pool = mysql.createPool(cfg);
+  // 处理空闲连接被服务端关闭导致的 EPIPE
+  pool.on('error', (err) => {
+    if (err.code === 'EPIPE' || err.code === 'ECONNRESET') {
+      console.log('⚠️  连接池空闲连接失效（正常现象，已自动重建）');
+    } else {
+      console.error('MySQL 连接池错误:', err.message);
+    }
+  });
   // 测试连接
   const conn = await pool.getConnection();
   conn.release();
@@ -247,6 +258,7 @@ function maskPhone(phone) {
 
 // ==================== Express ====================
 const app = express();
+app.set('trust proxy', 1);  // Render 使用反向代理，必须启用
 
 app.use(helmet({
   contentSecurityPolicy: false,
@@ -345,7 +357,7 @@ app.get("/api/price-images", async (req, res) => {
   try {
     // 去掉 ORDER BY，避免大图片排序撑爆 SQLPub 免费版 sort buffer
     const [rows] = await db.execute("SELECT id, data_url, name, created FROM price_images");
-    rows.sort((a, b) => (b.created || '').localeCompare(a.created || ''));
+    rows.sort((a, b) => String(b.created || '').localeCompare(String(a.created || '')));
     res.json(rows.map(r => ({ id: r.id, dataUrl: r.data_url, data_url: r.data_url, name: r.name, created: r.created })));
   } catch (e) {
     console.error("查询价格图片失败:", e.message);
@@ -389,9 +401,9 @@ app.get("/api/price-list", async (req, res) => {
   try {
     const [rows] = await db.execute("SELECT id, game, name, price FROM price_list");
     rows.sort((a, b) => {
-      const g = (a.game || '').localeCompare(b.game || '');
+      const g = String(a.game || '').localeCompare(String(b.game || ''));
       if (g !== 0) return g;
-      return (a.created || '').localeCompare(b.created || '');
+      return String(a.created || '').localeCompare(String(b.created || ''));
     });
     res.json(rows.map(r => ({ ...r, price: Number(r.price) })));
   } catch (e) {
@@ -500,9 +512,9 @@ app.get("/api/orders", adminAuth, async (req, res) => {
     // 去掉 ORDER BY，避免大字段排序撑爆 SQLPub 免费版 sort buffer
     const [rows] = await db.execute(sql, params);
     rows.sort((a, b) => {
-      const d = (b.date || '').localeCompare(a.date || '');
+      const d = String(b.date || '').localeCompare(String(a.date || ''));
       if (d !== 0) return d;
-      return (b.created || '').localeCompare(a.created || '');
+      return String(b.created || '').localeCompare(String(a.created || ''));
     });
     res.json(rows.map(rowToOrder));
   } catch (e) {
@@ -518,9 +530,9 @@ app.get("/api/orders/public", async (req, res) => {
       "SELECT * FROM orders LIMIT 50"
     );
     rows.sort((a, b) => {
-      const d = (b.date || '').localeCompare(a.date || '');
+      const d = String(b.date || '').localeCompare(String(a.date || ''));
       if (d !== 0) return d;
-      return (b.created || '').localeCompare(a.created || '');
+      return String(b.created || '').localeCompare(String(a.created || ''));
     });
     res.json(rows.map(r => {
       const o = rowToOrder(r);
