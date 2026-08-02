@@ -466,20 +466,8 @@ tbody tr:hover { background: #f8fcff; }
             <button class="game-tab" data-game="鸣潮">🎮 鸣潮</button>
             <button class="game-tab" data-game="崩铁">🎮 崩铁</button>
           </div>
-          <!-- 原神子分类标签 -->
-          <div class="category-tabs" id="categoryTabs" style="display:flex;">
-            <button class="cat-tab active" data-cat="全部">全部</button>
-            <button class="cat-tab" data-cat="托管类">托管类</button>
-            <button class="cat-tab" data-cat="地图探索">地图探索</button>
-            <button class="cat-tab" data-cat="神瞳类">神瞳类</button>
-            <button class="cat-tab" data-cat="魔神任务">魔神任务</button>
-            <button class="cat-tab" data-cat="世界任务">世界任务</button>
-            <button class="cat-tab" data-cat="大型世界任务">大型世界任务</button>
-            <button class="cat-tab" data-cat="活动类">活动类</button>
-            <button class="cat-tab" data-cat="钓鱼武器">钓鱼武器</button>
-            <button class="cat-tab" data-cat="材料类">材料类</button>
-            <button class="cat-tab" data-cat="角色培养">角色培养</button>
-          </div>
+          <!-- 子分类标签（按当前游戏动态生成） -->
+          <div class="category-tabs" id="categoryTabs" style="display:flex;"></div>
           <div class="price-grid" id="orderPriceGrid">
             <div class="empty-state"><span class="empty-icon">📭</span>还没有文字价格项目</div>
           </div>
@@ -1711,14 +1699,25 @@ tbody tr:hover { background: #f8fcff; }
     // 按游戏筛选
     let filtered = merged.filter(p => p.game === customerGame);
 
-    // 仅原神显示分类标签
-    if (customerGame === '原神') {
+    // 动态生成当前游戏的分类标签（保序去重）
+    const cats = [];
+    filtered.forEach(p => {
+      const c = p.category || '其他';
+      if (!cats.includes(c)) cats.push(c);
+    });
+    if (cats.length > 1) {
       catTabsEl.style.display = 'flex';
-      if (customerCat !== '全部') {
-        filtered = filtered.filter(p => p.category === customerCat);
-      }
+      // 切换游戏后 customerCat 可能残留其他游戏的分类，重置为「全部」
+      if (customerCat !== '全部' && !cats.includes(customerCat)) customerCat = '全部';
+      catTabsEl.innerHTML = `<button class="cat-tab${customerCat === '全部' ? ' active' : ''}" data-cat="全部">全部</button>` +
+        cats.map(c => `<button class="cat-tab${customerCat === c ? ' active' : ''}" data-cat="${escAttr(c)}">${escHtml(c)}</button>`).join('');
     } else {
       catTabsEl.style.display = 'none';
+    }
+
+    // 分类筛选
+    if (customerCat !== '全部') {
+      filtered = filtered.filter(p => (p.category || '其他') === customerCat);
     }
 
     if (!filtered.length) {
@@ -2162,18 +2161,18 @@ tbody tr:hover { background: #f8fcff; }
     btn.classList.add('active');
     customerGame = btn.dataset.game;
     customerCat = '全部';
-    // 重置分类标签
-    $$('.cat-tab').forEach(b => b.classList.toggle('active', b.dataset.cat === '全部'));
     renderCustomerPriceGrid();
   }));
 
-  // 客户面板 - 分类标签切换
-  $$('.cat-tab').forEach(btn => btn.addEventListener('click', () => {
+  // 客户面板 - 分类标签切换（标签动态生成，用事件委托）
+  $('#categoryTabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.cat-tab');
+    if (!btn) return;
     $$('.cat-tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     customerCat = btn.dataset.cat;
     renderCustomerPriceGrid();
-  }));
+  });
 
   // Admin
   $('#adminLoginBtn').addEventListener('click', doAdminLogin);
