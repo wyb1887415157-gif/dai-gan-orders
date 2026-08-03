@@ -454,6 +454,19 @@ tbody tr:hover { background: #f8fcff; }
   <div class="panel active" id="panel-order">
     <div class="order-layout">
       <div class="order-left">
+        <!-- 管理员：上传价格图（仅管理员可见） -->
+        <div id="orderImgAdmin" class="card" style="display:none;margin-bottom:12px;">
+          <div class="card-header">📤 上传价格图（管理员）</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px 14px;">
+            <select id="orderImgGame" style="padding:5px 10px;border:1px solid var(--card-border);border-radius:8px;font-size:0.82rem;">
+              <option value="">未指定（通用）</option>
+              <option>原神</option><option>异环</option><option>终末地</option><option>绝区零</option><option>鸣潮</option><option>崩铁</option>
+            </select>
+            <button class="btn btn-sm btn-primary" id="orderImgUploadBtn">📤 选择图片上传</button>
+            <input type="file" id="orderImgFileInput" accept="image/*" multiple style="display:none;">
+            <span style="font-size:0.75rem;color:var(--text-muted);">支持多张；价格图会显示在下方，客户可见</span>
+          </div>
+        </div>
         <div id="orderPriceImgs"></div>
         <div class="card" style="margin-top:12px;">
           <div class="card-header">📋 文字价格表 — 点击 <span style="color:var(--accent);">➕</span> 加入订单</div>
@@ -1207,6 +1220,7 @@ tbody tr:hover { background: #f8fcff; }
     $('#adminKeyInput').style.display = isAdm ? 'none' : '';
     // 管理员操作区域
     $('#customerAddPriceBtn').style.display = isAdm ? '' : 'none';
+    $('#orderImgAdmin').style.display = isAdm ? '' : 'none';
     if (apiMode) {
       $('#refreshBtn').style.display = isAdm ? '' : 'none';
       // 手动添加面板：只有管理员能访问
@@ -1598,18 +1612,37 @@ tbody tr:hover { background: #f8fcff; }
     // 价格图片（跟随当前游戏标签：通用图 + 当前游戏的图）
     const imgContainer = $('#orderPriceImgs');
     const imgs = priceImgs.filter(i => !i.game || i.game === customerGame);
+    const isAdm = isAdmin();
     if (imgs.length) {
       imgContainer.innerHTML = '<div class="card"><div class="card-header">🖼️ 图片价格表（点击放大）</div><div class="price-img-grid">' +
         imgs.map(img => `
           <div class="price-img-card" data-lightbox="${escAttr(img.dataUrl || img.data_url || '')}">
-            <img src="${escAttr(img.dataUrl || img.data_url || '')}" alt="价格表" loading="lazy"><div class="img-label"><span>📄 ${escHtml(img.name)}${img.game ? ` <small style="opacity:0.7;">🎮 ${escHtml(img.game)}</small>` : ''}</span></div>
+            <img src="${escAttr(img.dataUrl || img.data_url || '')}" alt="价格表" loading="lazy">
+            <div class="img-label">
+              <span>📄 ${escHtml(img.name)}${img.game ? ` <small style="opacity:0.7;">🎮 ${escHtml(img.game)}</small>` : ''}</span>
+              ${isAdm ? `<button data-del-img="${img.id}" title="删除这张价格图" style="background:none;border:none;cursor:pointer;font-size:0.85rem;padding:0 2px;">🗑️</button>` : ''}
+            </div>
           </div>
         `).join('') + '</div></div>';
       // 事件委托：避免 base64 撑爆 onclick 属性
       imgContainer.querySelectorAll('.price-img-card').forEach(card => {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('[data-del-img]')) return; // 不拦截删除按钮
           const src = this.dataset.lightbox;
           if (src) window._showLightbox(src);
+        });
+      });
+      // 管理员删除价格图
+      imgContainer.querySelectorAll('[data-del-img]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (!confirm('确定删除这张价格图吗？')) return;
+          try {
+            await apiDeletePriceImg(btn.dataset.delImg);
+            await refreshAllData();
+            renderCustomerOrder();
+            toast('🗑️ 已删除');
+          } catch (err) { toast(`❌ 删除失败：${err.message}`); }
         });
       });
     } else {
@@ -1947,6 +1980,34 @@ tbody tr:hover { background: #f8fcff; }
 
   // 客户面板：新增价格项目（管理员）
   $('#customerAddPriceBtn').addEventListener('click', () => openPriceEditModal(null, customerGame));
+
+  // 客户面板：上传价格图（管理员）
+  $('#orderImgUploadBtn').addEventListener('click', () => $('#orderImgFileInput').click());
+  $('#orderImgFileInput').addEventListener('change', async e => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const game = $('#orderImgGame').value;
+    let ok = 0, fail = 0;
+    for (const f of files) {
+      if (!f.type.startsWith('image/')) continue;
+      try {
+        const b64 = await file2b64(f);
+        toast(`正在上传 ${f.name}（${(b64.length/1024/1024).toFixed(1)} MB）...`);
+        await apiAddPriceImg(b64, f.name || '价格表', game);
+        ok++;
+      } catch (err) {
+        fail++;
+        console.error('上传失败:', f.name, err);
+        toast(`❌ ${f.name} 上传失败: ${err.message}`);
+      }
+    }
+    e.target.value = '';
+    if (ok > 0) {
+      await refreshAllData();
+      renderCustomerOrder();
+      toast(`✅ 成功上传 ${ok} 张${fail > 0 ? `，${fail} 张失败` : ''}`);
+    }
+  });
 
   // 价格条目编辑 Modal
   $('#peSave').addEventListener('click', savePriceEdit);
