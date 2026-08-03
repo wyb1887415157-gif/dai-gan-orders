@@ -169,6 +169,7 @@ body.has-bg::before {
 .price-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow); }
 .price-card .price-info { flex: 1; min-width: 0; }
 .price-card .price-name { font-weight: 600; font-size: 0.9rem; word-break: break-word; }
+.price-card .price-cat { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
 .price-card .price-value { font-size: 1.05rem; font-weight: 700; color: var(--primary-dark); margin-top: 2px; }
 .price-card .price-actions { display: flex; gap: 4px; flex-shrink: 0; }
 @keyframes highlightPulse {
@@ -468,6 +469,9 @@ tbody tr:hover { background: #f8fcff; }
           </div>
           <!-- 子分类标签（按当前游戏动态生成） -->
           <div class="category-tabs" id="categoryTabs" style="display:flex;"></div>
+          <div id="customerPriceAddBar" style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn btn-sm btn-primary" id="customerAddPriceBtn" style="display:none;" title="在当前游戏下新增价格项目">➕ 新增价格项目</button>
+          </div>
           <div class="price-grid" id="orderPriceGrid">
             <div class="empty-state"><span class="empty-icon">📭</span>还没有文字价格项目</div>
           </div>
@@ -519,7 +523,9 @@ tbody tr:hover { background: #f8fcff; }
     </div>
 
     <div class="card">
-      <div class="card-header">📋 文字价格表 — 逐条录入</div>
+      <div class="card-header">📋 文字价格表 — 逐条录入
+        <select id="pmGameFilter" style="margin-left:12px;padding:3px 8px;border:1px solid var(--card-border);border-radius:8px;font-size:0.85rem;" title="按游戏筛选"></select>
+      </div>
       <div class="inline-form" id="priceForm" style="display:none;">
         <div class="field">
           <label>🎮 游戏</label>
@@ -529,6 +535,11 @@ tbody tr:hover { background: #f8fcff; }
           <label>📋 项目名称</label>
           <input type="text" id="pfName" placeholder="如：雨林全包+森林书" style="width:190px;">
         </div>
+        <div class="field">
+          <label>📋 分类</label>
+          <input type="text" id="pfCategory" list="pfCatList" placeholder="如：托管类（留空 = 其他）" style="width:130px;">
+        </div>
+        <datalist id="pfCatList"></datalist>
         <div class="field">
           <label>💰 价格（元）</label>
           <input type="number" id="pfPrice" placeholder="350" step="0.01" min="0" style="width:90px;">
@@ -767,8 +778,290 @@ tbody tr:hover { background: #f8fcff; }
     </div>
   </div>
 
+  <!-- ===== 价格参考表：异环 ===== -->
+  <div class="card">
+    <div class="card-header">🎮 异环 — 1.2 版本价格参考</div>
 
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📋 版本任务（单次）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td><strong>主线任务</strong></td><td>40r</td></tr>
+          <tr><td><strong>999夜·限时奖励</strong></td><td>35r</td></tr>
+          <tr><td><strong>999夜·清空商店</strong>（主线+限时奖励+清空纽扣商店）</td><td>350r</td></tr>
+        </tbody>
+      </table>
+    </div>
 
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 地图收集（含支线+异象委托）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>地图全收集（1.0 + 1.1）</td><td>330r</td></tr>
+          <tr><td>1.0 地图全收集</td><td>300r</td></tr>
+          <tr><td>1.1 地图全收集</td><td>30r</td></tr>
+          <tr><td>粉爪大劫案</td><td>25r/期</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📅 日常托管套餐（月付）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>套餐</th><th>内容</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td><strong>日常套餐</strong></td><td>每日活跃打满</td><td>35r/月</td></tr>
+          <tr><td><strong>日体套餐</strong></td><td>每日活跃+每日体力+周本</td><td>70r/月</td></tr>
+          <tr><td><strong>精托套餐</strong></td><td>日体套餐+期间活动+都市活力</td><td>150r/月</td></tr>
+          <tr><td><strong>全托套餐</strong></td><td>精托套餐+每期粉爪</td><td>240r/月</td></tr>
+          <tr><td><strong>至尊套餐</strong></td><td>全托套餐+规划体力精致养号+深渊</td><td>350r/月</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🚀 开荒套餐</p>
+    <div class="table-wrap">
+      <table style="min-width:550px;">
+        <thead><tr><th>套餐</th><th>内容</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>⭐ 开荒套餐1</td><td>主线任务全清 + 解锁全图传送点（留卡等级）</td><td>868r</td></tr>
+          <tr><td>⭐ 开荒套餐2</td><td>任务全清（主线+支线等）+ 解锁全图传送点</td><td>1288r</td></tr>
+          <tr><td>⭐ 开荒套餐3</td><td>所有任务全清 + 解锁全图传送点 + 地图全收集（全赠礼+偷石+异象委托等）</td><td>1688r</td></tr>
+          <tr><td>✧ 至尊开荒</td><td>全主线+全支线+全收集+全活动+都市玩法当前版本毕业+其他玩法奖励拿满</td><td>2088r</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== 价格参考表：鸣潮 ===== -->
+  <div class="card">
+    <div class="card-header">🎮 鸣潮 — 价格参考</div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📅 托管类</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>日常体力（体力指定）</td><td>30r/月</td></tr>
+          <tr><td>精托·可指定（日常体力+期间活动+肉鸽+电台满级）</td><td>100r/月</td></tr>
+          <tr><td>账号全托（精托+海虚+角色养成+账号规划·免费帮打36残像）</td><td>240r/版本</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">⚔️ 挑战内容</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:350px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>冥歌海墟</td><td>10r/次</td></tr>
+          <tr><td>深塔</td><td>10r/次</td></tr>
+          <tr><td>千道门扉的异想</td><td>3r/次</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 探索度 — 全收集</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:450px;">
+        <thead><tr><th>项目</th><th>价格</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td>100%全收集</td><td>+100r</td><td>包含地图探索度的危行任务，不包含主线</td></tr>
+          <tr><td>瑝珑区域（瑝珑+黑海岸全收集）</td><td>390r</td><td></td></tr>
+          <tr><td>黎那汐塔全收集</td><td>460r</td><td></td></tr>
+          <tr><td>3.0版本·罗伊伊原全收集</td><td>160r</td><td></td></tr>
+          <tr><td>3.1版本·罗伊冰原全收集</td><td>60r</td><td></td></tr>
+          <tr><td>3.3版本·罗伊冰原全收集</td><td>65r</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 瑝珑区域 — 单区域探索</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>区域</th><th>价格</th><th>区域</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>云陵谷</td><td>20r</td><td>无明湾</td><td>20r</td></tr>
+          <tr><td>今州城</td><td>20r</td><td>北落野</td><td>20r</td></tr>
+          <tr><td>中曲台地</td><td>49r</td><td>怨鸟泽</td><td>35r</td></tr>
+          <tr><td>荒石高地</td><td>40r</td><td>虎口山脉</td><td>30r</td></tr>
+          <tr><td>归墟港市</td><td>30r</td><td>乘霄山</td><td>55r</td></tr>
+          <tr><td>无光之森</td><td>30r</td><td>黑海岸</td><td>50r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 黎那汐塔 — 单区域探索</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>区域</th><th>价格</th><th>区域</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>拉古那城</td><td>5r</td><td>檀生半岛</td><td>30r</td></tr>
+          <tr><td>埃弗拉金库</td><td>20r</td><td>狄萨莱海脊</td><td>20r</td></tr>
+          <tr><td>悲叹墓岛</td><td>25r</td><td>黎那利群岛</td><td>20r</td></tr>
+          <tr><td>赞祷圣迹</td><td>30r</td><td>下层金库</td><td>30r</td></tr>
+          <tr><td>佛风水畔</td><td>25r</td><td>阿维纽林</td><td>45r</td></tr>
+          <tr><td>氪探水境</td><td>25r</td><td>贝奥海域</td><td>25r</td></tr>
+          <tr><td>七丘</td><td>80r</td><td>隐海试炼场</td><td>25r</td></tr>
+          <tr><td>桑古伊斯狩场</td><td>45r</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🎵 声骸类</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>锄大地（可指定）</td><td>20r/小时</td></tr>
+          <tr><td>毕业声骸全套（属性双爆+两个有效词条）</td><td>325r</td></tr>
+          <tr><td>单/双爆声骸（一套）</td><td>200r</td></tr>
+          <tr><td>数据坞·25级全包</td><td>200r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📜 任务与活动</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>主线任务</td><td>25r/幕</td></tr>
+          <tr><td>伴星任务</td><td>15r</td></tr>
+          <tr><td>危行任务</td><td>10r</td></tr>
+          <tr><td>纪闻任务</td><td>5r</td></tr>
+          <tr><td>大活动</td><td>30 — 60r</td></tr>
+          <tr><td>小活动</td><td>15r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📦 常驻活动（性价比低，非必要不选）</p>
+    <div class="table-wrap">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>老人与海</td><td>50r</td></tr>
+          <tr><td>团团团团转</td><td>40r</td></tr>
+          <tr><td>幻梦游乐园</td><td>30r</td></tr>
+          <tr><td>浸梦海床</td><td>60r</td></tr>
+          <tr><td>失序梦途</td><td>30r</td></tr>
+          <tr><td>激斗！向着荣耀之丘</td><td>30r</td></tr>
+          <tr><td>荣耀之丘·激斗重燃</td><td>35r</td></tr>
+          <tr><td>潮蚀模拟</td><td>50r</td></tr>
+          <tr><td>穗波怪异物语</td><td>35r</td></tr>
+          <tr><td>旌旗不落</td><td>25r</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== 价格参考表：终末地 ===== -->
+  <div class="card">
+    <div class="card-header">🎮 终末地 — 价格参考</div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🚀 开荒套餐</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:550px;">
+        <thead><tr><th>套餐</th><th>内容</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>全图开荒套餐</td><td>1.0-1.4·全图主线+所有支线+优化基建+拉线养成+规划角色+解锁地图全部玩法</td><td>1800r</td></tr>
+          <tr><td>全包套餐（1.4）</td><td>所有主线+支线+活动+养成+每日养成+送货</td><td>325r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📅 托管</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>项目</th><th>按天</th><th>包月</th></tr></thead>
+        <tbody>
+          <tr><td>每日日常</td><td>1r/天</td><td>25r/月</td></tr>
+          <tr><td>每日体力（可指定）</td><td>1r/天</td><td>25r/月</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>套餐</th><th>内容</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>精致托管</td><td>日体+仓储节点+环境监测+总控中枢</td><td>150r/月</td></tr>
+          <tr><td>全托套餐</td><td>精致托管+当月所有活动+纪行打满</td><td>300r/月</td></tr>
+          <tr><td>至尊全托</td><td>全托+从零到基本毕业的队伍</td><td>450r/月</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🗺️ 探索</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>项目</th><th>价格</th><th>前置任务</th></tr></thead>
+        <tbody>
+          <tr><td>四号谷地全收集</td><td>280r</td><td>50r</td></tr>
+          <tr><td>武陵全收集</td><td>355r</td><td>40r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📖 主线任务（全包 325r）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:500px;">
+        <thead><tr><th>任务</th><th>价格</th><th>任务</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>序章</td><td>15r</td><td>基地解围</td><td>10r</td></tr>
+          <tr><td>谷地重启</td><td>15r</td><td>世纪摇篮</td><td>20r</td></tr>
+          <tr><td>前往武陵城</td><td>25r</td><td>开拓前路</td><td>10r</td></tr>
+          <tr><td>暗礁雾火要塞决战</td><td>15r</td><td>初入终局</td><td>20r</td></tr>
+          <tr><td>穆如春风</td><td>25r</td><td>重整旗鼓其二</td><td>15r</td></tr>
+          <tr><td>帝江号</td><td>12r</td><td>再度启程</td><td>20r</td></tr>
+          <tr><td>未烬火种</td><td>20r</td><td>潮涌汹汹</td><td>15r</td></tr>
+          <tr><td>西行入谷庇护之所</td><td>20r</td><td>武陵矿脉寻章</td><td>20r</td></tr>
+          <tr><td>四方会议</td><td>20r</td><td>无患之患</td><td>10r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📜 支线任务（全包 150r）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>任务</th><th>价格</th><th>任务</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>驰援采石场</td><td>30r</td><td>无色印记</td><td>10r</td></tr>
+          <tr><td>希望与代价</td><td>10r</td><td>帮人帮到底</td><td>10r</td></tr>
+          <tr><td>再访基地</td><td>10r</td><td>稼穑不易</td><td>10r</td></tr>
+          <tr><td>爱呐喊与原型机</td><td>15r</td><td>南路难走系列</td><td>20r</td></tr>
+          <tr><td>环带来客</td><td>5r</td><td>紧急救助</td><td>5r</td></tr>
+          <tr><td>晚安大树·器人之梦</td><td>5r</td><td>内部敌人</td><td>10r</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">📦 次级任务（全包 80r）</p>
+    <div class="table-wrap" style="margin-bottom:14px;">
+      <table style="min-width:400px;">
+        <thead><tr><th>任务</th><th>价格</th><th>任务</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>风雨欲来系列</td><td>20r</td><td>机械救星</td><td>10r</td></tr>
+          <tr><td>职责所在</td><td>10r</td><td>尘封旧档</td><td>10r</td></tr>
+          <tr><td>爆破救援</td><td>10r</td><td>高空救援</td><td>5r</td></tr>
+          <tr><td>幻觉</td><td>10r</td><td>维修总动员</td><td>10r</td></tr>
+          <tr><td>漏网之虫</td><td>10r</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;color:var(--primary-dark);margin:0 0 8px 0;font-size:0.9rem;">🔧 功能任务（全包 60r）</p>
+    <div class="table-wrap">
+      <table style="min-width:300px;">
+        <thead><tr><th>项目</th><th>价格</th></tr></thead>
+        <tbody>
+          <tr><td>功能任务全包</td><td>60r</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- ==================== Panel 3: 手动添加订单 ==================== -->
   <div class="panel" id="panel-add">
@@ -886,6 +1179,26 @@ tbody tr:hover { background: #f8fcff; }
     <div class="modal-actions">
       <button class="btn btn-outline" id="editCancel">取消</button>
       <button class="btn btn-primary" id="editSave">💾 保存修改</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 价格条目编辑 Modal（管理员：改名/调分类/改价/删除/新增） ===== -->
+<div class="modal-overlay" id="priceEditModal">
+  <div class="modal">
+    <h3 id="peTitle">✏️ 编辑价格项目</h3>
+    <div class="form-grid">
+      <div class="form-group half"><label>🎮 游戏</label><input type="text" id="peGame" list="peGameList" placeholder="如：原神" required></div>
+      <div class="form-group half"><label>📋 分类</label><input type="text" id="peCat" list="peCatList" placeholder="如：托管类（留空 = 其他）"></div>
+      <div class="form-group half"><label>📋 项目名称</label><input type="text" id="peName" placeholder="如：每日委托（包月）" required></div>
+      <div class="form-group half"><label>💰 价格（元）</label><input type="number" id="pePrice" step="0.01" min="0" required></div>
+    </div>
+    <datalist id="peGameList"></datalist>
+    <datalist id="peCatList"></datalist>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="peCancel">取消</button>
+      <button class="btn btn-danger" id="peDelete" style="display:none;">🗑️ 删除</button>
+      <button class="btn btn-primary" id="peSave">💾 保存</button>
     </div>
   </div>
 </div>
@@ -1359,22 +1672,33 @@ tbody tr:hover { background: #f8fcff; }
     }
   }
 
-  async function apiAddPriceItem(game, name, price) {
+  async function apiAddPriceItem(game, name, price, category) {
     if (apiMode) {
-      return await apiFetch('/api/price-list', { method: 'POST', body: JSON.stringify({ game, name, price }) });
+      return await apiFetch('/api/price-list', { method: 'POST', body: JSON.stringify({ game, name, price, category: category || '' }) });
     } else {
-      priceList.push({ id: genId(), game, name, price });
+      priceList.push({ id: genId(), game, name, price, category: category || '' });
       saveLocal();
       return { ok: true };
     }
   }
 
-  async function apiUpdatePriceItem(id, game, name, price) {
+  async function apiUpdatePriceItem(id, game, name, price, category) {
     if (apiMode) {
-      return await apiFetch(`/api/price-list/${id}`, { method: 'PUT', body: JSON.stringify({ game, name, price }) });
+      return await apiFetch(`/api/price-list/${id}`, { method: 'PUT', body: JSON.stringify({ game, name, price, category: category || '' }) });
     } else {
       const idx = priceList.findIndex(p => p.id === id);
-      if (idx !== -1) { priceList[idx] = { id, game, name, price }; saveLocal(); }
+      if (idx !== -1) { priceList[idx] = { id, game, name, price, category: category || '' }; saveLocal(); }
+      return { ok: true };
+    }
+  }
+
+  // 墓碑：软删除"默认价格条目"（无 DB id），或改名/换游戏时顶掉旧名字的默认条目
+  async function apiTombstonePriceItem(game, name) {
+    if (apiMode) {
+      return await apiFetch('/api/price-list', { method: 'POST', body: JSON.stringify({ game, name, tombstone: true }) });
+    } else {
+      priceList.push({ id: genId(), game, name, price: 0, category: '', is_deleted: true });
+      saveLocal();
       return { ok: true };
     }
   }
@@ -1383,7 +1707,9 @@ tbody tr:hover { background: #f8fcff; }
     if (apiMode) {
       return await apiFetch(`/api/price-list/${id}`, { method: 'DELETE' });
     } else {
-      priceList = priceList.filter(p => p.id !== id); saveLocal();
+      // 本地模式也软删：保留墓碑，挡住同名默认条目
+      const idx = priceList.findIndex(p => p.id === id);
+      if (idx !== -1) { priceList[idx] = { ...priceList[idx], is_deleted: true }; saveLocal(); }
       return { ok: true };
     }
   }
@@ -1432,6 +1758,7 @@ tbody tr:hover { background: #f8fcff; }
     $('#adminLogoutBtn').style.display = isAdm ? '' : 'none';
     $('#adminKeyInput').style.display = isAdm ? 'none' : '';
     // 管理员操作区域
+    $('#customerAddPriceBtn').style.display = isAdm ? '' : 'none';
     if (apiMode) {
       // 价格表管理：只有管理员能编辑/上传
       $('#priceForm').style.display = isAdm ? '' : 'none';
@@ -1654,6 +1981,7 @@ tbody tr:hover { background: #f8fcff; }
         html += `<div class="price-card" data-pid="${item.id}">
           <div class="price-info">
             <div class="price-name">${escHtml(item.name)}</div>
+            <div class="price-cat">📌 ${escHtml(item.category || '其他')}</div>
             <div class="price-value">${fmtMoney(item.price)}</div>
           </div>
           ${showActions ? `
@@ -1685,15 +2013,17 @@ tbody tr:hover { background: #f8fcff; }
     const container = $('#orderPriceGrid');
     const catTabsEl = $('#categoryTabs');
 
-    // 合并默认数据 + 数据库价格列表
-    const merged = [...ALL_DEFAULT_PRICES];
+    // 合并：DB 条目优先（可改价/改名/改分类），墓碑挡住同名默认条目
+    const tombstones = new Set(priceList.filter(p => p.is_deleted).map(p => p.game + '|' + p.name));
+    const merged = [];
     priceList.forEach(p => {
-      if (!merged.some(m => m.game === p.game && m.name === p.name)) {
-        merged.push({ game: p.game, category: p.category || '其他', name: p.name, price: p.price, id: p.id });
-      } else if (p.id) {
-        const m = merged.find(m => m.game === p.game && m.name === p.name);
-        if (m) { m.id = p.id; m.price = p.price; }
-      }
+      if (p.is_deleted) return;
+      merged.push({ game: p.game, category: p.category || '其他', name: p.name, price: p.price, id: p.id });
+    });
+    ALL_DEFAULT_PRICES.forEach(d => {
+      if (tombstones.has(d.game + '|' + d.name)) return;
+      if (merged.some(m => m.game === d.game && m.name === d.name)) return;
+      merged.push(d);
     });
 
     // 按游戏筛选
@@ -1735,7 +2065,7 @@ tbody tr:hover { background: #f8fcff; }
     });
 
     let html = '';
-    const showAdminEdit = apiMode && isAdmin();
+    const showAdminEdit = isAdmin();
     for (const [cat, items] of Object.entries(groups)) {
       html += `<div style="grid-column:1/-1;font-weight:700;color:var(--primary-dark);font-size:0.85rem;margin-top:6px;padding:4px 0;border-bottom:1px solid #f0eafa;">📌 ${escHtml(cat)}</div>`;
       items.forEach(item => {
@@ -1746,7 +2076,7 @@ tbody tr:hover { background: #f8fcff; }
             <div class="price-value">${fmtMoney(item.price)}</div>
           </div>
           <button class="btn-add-item" data-act="add-cart-customer" data-name="${escAttr(item.name)}" data-price="${item.price}" data-game="${escAttr(item.game)}" title="加入订单">➕</button>
-          ${showAdminEdit ? `<button class="btn btn-xs btn-outline" data-act="quick-edit-price" data-id="${escAttr(hasId ? item.id : '')}" data-game="${escAttr(item.game)}" data-cat="${escAttr(item.category || '')}" data-name="${escAttr(item.name)}" data-price="${item.price}" title="快速改价" style="margin-left:2px;flex-shrink:0;">✏️</button>` : ''}
+          ${showAdminEdit ? `<button class="btn btn-xs btn-outline" data-act="edit-price-customer" data-id="${escAttr(hasId ? item.id : '')}" data-game="${escAttr(item.game)}" data-cat="${escAttr(item.category || '')}" data-name="${escAttr(item.name)}" data-price="${item.price}" title="编辑价格项目" style="margin-left:2px;flex-shrink:0;">✏️</button>` : ''}
         </div>`;
       });
     }
@@ -1763,84 +2093,203 @@ tbody tr:hover { background: #f8fcff; }
       });
     });
 
-    // 管理员快速改价
-    container.querySelectorAll('[data-act="quick-edit-price"]').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
+    // 管理员编辑价格条目（打开编辑弹窗）
+    container.querySelectorAll('[data-act="edit-price-customer"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const oldPrice = +btn.dataset.price;
-        const newPriceStr = prompt(`修改价格：${btn.dataset.name}\n当前：¥${oldPrice.toFixed(2)}`, oldPrice);
-        if (newPriceStr === null) return; // 用户取消
-        const newPrice = parseFloat(newPriceStr);
-        if (isNaN(newPrice) || newPrice < 0) { toast('请输入有效价格'); return; }
-        try {
-          const game = btn.dataset.game;
-          const name = btn.dataset.name;
-          const cat  = btn.dataset.cat;
-          const id   = btn.dataset.id;
-          if (id) {
-            await apiUpdatePriceItem(id, game, name, newPrice);
-          } else {
-            await apiAddPriceItem(game, name, newPrice);
-          }
-          await refreshAllData();
-          renderCustomerOrder();
-          renderPriceManage();
-          toast(`✅ 价格已更新：${name} → ¥${newPrice.toFixed(2)}`);
-        } catch (err) {
-          toast(`❌ 改价失败：${err.message}`);
-        }
+        openPriceEditModal({
+          id: btn.dataset.id || '',
+          game: btn.dataset.game,
+          category: btn.dataset.cat || '',
+          name: btn.dataset.name,
+          price: +btn.dataset.price
+        }, customerGame);
       });
     });
   }
 
+  // ==================== 价格条目编辑弹窗（管理员） ====================
+  let peState = null; // { mode:'edit'|'add', id, origGame, origName }
+
+  function openPriceEditModal(item, currentGame) {
+    const isEdit = !!item;
+    peState = {
+      mode: isEdit ? 'edit' : 'add',
+      id: isEdit ? (item.id || '') : '',
+      origGame: isEdit ? item.game : currentGame,
+      origName: isEdit ? item.name : ''
+    };
+    $('#peTitle').textContent = isEdit ? '✏️ 编辑价格项目' : '➕ 新增价格项目';
+    $('#peGame').value  = isEdit ? item.game : currentGame;
+    $('#peCat').value   = isEdit ? (item.category || '') : '';
+    $('#peName').value  = isEdit ? item.name : '';
+    $('#pePrice').value = isEdit ? item.price : '';
+    $('#peDelete').style.display = isEdit ? '' : 'none';
+
+    // 游戏建议列表（默认数据 + DB 中出现的游戏，保序去重）
+    const games = [];
+    [...ALL_DEFAULT_PRICES, ...priceList].forEach(p => {
+      if (!games.includes(p.game)) games.push(p.game);
+    });
+    $('#peGameList').innerHTML = games.map(g => `<option value="${escAttr(g)}">`).join('');
+
+    refreshPeCatList();
+    $('#priceEditModal').classList.add('show');
+    $('#peName').focus();
+  }
+
+  // 分类建议：当前输入游戏下已有的分类（默认数据 + DB，保序去重）
+  function refreshPeCatList() {
+    const game = $('#peGame').value.trim();
+    const cats = [];
+    [...ALL_DEFAULT_PRICES, ...priceList].forEach(p => {
+      if (p.game === game && p.category && !cats.includes(p.category)) cats.push(p.category);
+    });
+    $('#peCatList').innerHTML = cats.map(c => `<option value="${escAttr(c)}">`).join('');
+  }
+
+  function closePriceEditModal() { $('#priceEditModal').classList.remove('show'); peState = null; }
+
+  async function savePriceEdit() {
+    const s = peState;
+    if (!s) return;
+    const game  = $('#peGame').value.trim();
+    const cat   = $('#peCat').value.trim();
+    const name  = $('#peName').value.trim();
+    const price = +($('#pePrice').value) || 0;
+    if (!game || !name || price <= 0) { toast('请填写游戏、项目名称和有效价格~'); return; }
+    try {
+      if (s.mode === 'edit') {
+        // 改名 / 换游戏 → 先墓碑旧名字的默认条目，避免新旧两条并存
+        if (s.origName !== name || s.origGame !== game) {
+          await apiTombstonePriceItem(s.origGame, s.origName);
+        }
+        if (s.id) {
+          await apiUpdatePriceItem(s.id, game, name, price, cat);
+        } else {
+          await apiAddPriceItem(game, name, price, cat);
+        }
+      } else {
+        await apiAddPriceItem(game, name, price, cat);
+      }
+      await refreshAllData();
+      renderCustomerOrder();
+      renderPriceManage();
+      closePriceEditModal();
+      toast(s.mode === 'edit' ? '✅ 已保存修改' : '✅ 已添加');
+    } catch (err) {
+      toast(`❌ 保存失败：${err.message}`);
+    }
+  }
+
+  async function deletePriceEdit() {
+    const s = peState;
+    if (!s || s.mode !== 'edit') return;
+    if (!confirm(`确定删除「${s.origName}」吗？`)) return;
+    try {
+      if (s.id) {
+        await apiDeletePriceItem(s.id);
+      } else {
+        await apiTombstonePriceItem(s.origGame, s.origName);
+      }
+      await refreshAllData();
+      renderCustomerOrder();
+      renderPriceManage();
+      closePriceEditModal();
+      toast('🗑️ 已删除');
+    } catch (err) {
+      toast(`❌ 删除失败：${err.message}`);
+    }
+  }
+
+  // 管理面板正在编辑的条目的原始 游戏+名称（改名时墓碑旧默认条目用）
+  let pfOrigGame = '', pfOrigName = '';
+
   function resetPriceForm() {
-    $('#pfGame').value = ''; $('#pfName').value = ''; $('#pfPrice').value = '';
+    $('#pfGame').value = ''; $('#pfName').value = ''; $('#pfCategory').value = ''; $('#pfPrice').value = '';
     $('#pfEditId').style.display = 'none'; $('#pfEditId').textContent = '';
     $('#pfAddBtn').textContent = '➕ 添加';
     $('#pfCancelEdit').style.display = 'none';
+    pfOrigGame = ''; pfOrigName = '';
   }
 
   function startEditPrice(id) {
     const item = priceList.find(p => p.id === id);
     if (!item) return;
-    $('#pfGame').value = item.game; $('#pfName').value = item.name; $('#pfPrice').value = item.price;
+    $('#pfGame').value = item.game; $('#pfName').value = item.name;
+    $('#pfCategory').value = item.category || '';
+    $('#pfPrice').value = item.price;
     $('#pfEditId').textContent = id; $('#pfEditId').style.display = '';
     $('#pfAddBtn').textContent = '💾 保存';
     $('#pfCancelEdit').style.display = '';
+    pfOrigGame = item.game; pfOrigName = item.name;
     $('#pfGame').focus();
   }
 
   async function deletePrice(id) {
     if (!confirm('确定删除该价格项目吗？')) return;
-    await apiDeletePriceItem(id);
-    await refreshAllData();
-    renderPriceManage();
-    renderCustomerOrder();
-    toast('已删除');
+    try {
+      await apiDeletePriceItem(id);
+      await refreshAllData();
+      renderPriceManage();
+      renderCustomerOrder();
+      toast('已删除');
+    } catch (err) { toast(`删除失败：${err.message}`); }
   }
 
   async function savePriceItem() {
-    const game = $('#pfGame').value.trim(), name = $('#pfName').value.trim(), price = +($('#pfPrice').value) || 0;
+    const game = $('#pfGame').value.trim(), name = $('#pfName').value.trim();
+    const cat = $('#pfCategory').value.trim(), price = +($('#pfPrice').value) || 0;
     if (!game || !name || price <= 0) { toast('请填写游戏、项目名称和有效价格~'); return; }
     const editId = $('#pfEditId').textContent;
-    if (editId) {
-      await apiUpdatePriceItem(editId, game, name, price);
-    } else {
-      await apiAddPriceItem(game, name, price);
-    }
-    await refreshAllData();
-    resetPriceForm();
-    renderPriceManage();
-    renderCustomerOrder();
-    toast(editId ? '已更新~' : '已添加~');
+    try {
+      if (editId) {
+        // 改名 / 换游戏 → 先墓碑旧名字的默认条目，避免新旧两条并存
+        if (pfOrigName !== name || pfOrigGame !== game) {
+          await apiTombstonePriceItem(pfOrigGame, pfOrigName);
+        }
+        await apiUpdatePriceItem(editId, game, name, price, cat);
+      } else {
+        await apiAddPriceItem(game, name, price, cat);
+      }
+      await refreshAllData();
+      resetPriceForm();
+      renderPriceManage();
+      renderCustomerOrder();
+      toast(editId ? '已更新~' : '已添加~');
+    } catch (err) { toast(`保存失败：${err.message}`); }
   }
 
   // ==================== 价格管理页 ====================
+  let pmGameFilter = ''; // 管理面板当前筛选的游戏
+
   function renderPriceManage() {
     const showDeleteImg = !apiMode || isAdmin();
     renderPriceImgGallery($('#priceImgGrid'), showDeleteImg);
     const showActions = !apiMode || isAdmin();
-    renderPriceGrid($('#priceGridManage'), priceList, showActions);
+
+    // 游戏筛选下拉：仅管理员可用
+    $('#pmGameFilter').style.display = (!apiMode || isAdmin()) ? '' : 'none';
+
+    // 游戏筛选下拉：默认数据 + DB 出现的游戏，保序去重
+    const games = [];
+    [...ALL_DEFAULT_PRICES, ...priceList].forEach(p => {
+      if (p.game && !games.includes(p.game)) games.push(p.game);
+    });
+    $('#pmGameFilter').innerHTML = '<option value="">🎮 全部游戏</option>' +
+      games.map(g => `<option value="${escAttr(g)}"${g === pmGameFilter ? ' selected' : ''}>${escHtml(g)}</option>`).join('');
+    if (pmGameFilter && !games.includes(pmGameFilter)) pmGameFilter = '';
+
+    // 分类建议（当前表单游戏下已有分类）
+    const pfGameVal = $('#pfGame').value.trim();
+    const pfCats = [];
+    [...ALL_DEFAULT_PRICES, ...priceList].forEach(p => {
+      if (p.game === pfGameVal && p.category && !pfCats.includes(p.category)) pfCats.push(p.category);
+    });
+    $('#pfCatList').innerHTML = pfCats.map(c => `<option value="${escAttr(c)}">`).join('');
+
+    const list = priceList.filter(p => !p.is_deleted && (!pmGameFilter || p.game === pmGameFilter));
+    renderPriceGrid($('#priceGridManage'), list, showActions);
     if (apiMode && !isAdmin()) {
       $('#priceForm').style.display = 'none';
       $('#priceImgDropzone').style.display = 'none';
@@ -2117,7 +2566,7 @@ tbody tr:hover { background: #f8fcff; }
             try { await apiAddPriceImg(img.dataUrl || img.data_url, img.name); count++; } catch(e) {}
           }
           for (const item of (data.priceList || [])) {
-            try { await apiAddPriceItem(item.game, item.name, item.price); count++; } catch(e) {}
+            try { await apiAddPriceItem(item.game, item.name, item.price, item.category); count++; } catch(e) {}
           }
           for (const o of data.orders) {
             try { await apiAddOrder({ date: o.date, phone: o.phone || '13800000000', price: o.price, content: o.content, isCompleted: !!o.isCompleted, images: o.images || [] }); count++; } catch(e) {}
@@ -2301,6 +2750,21 @@ tbody tr:hover { background: #f8fcff; }
   });
   $('#editCancel').addEventListener('click', () => { $('#editModal').classList.remove('show'); editingId = null; editImages = []; });
   $('#editModal').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('show'); editingId = null; editImages = []; } });
+
+  // 客户面板：新增价格项目（管理员）
+  $('#customerAddPriceBtn').addEventListener('click', () => openPriceEditModal(null, customerGame));
+
+  // 价格表页面：按游戏筛选
+  $('#pmGameFilter').addEventListener('change', (e) => { pmGameFilter = e.target.value; renderPriceManage(); });
+  // 表单游戏变化时刷新分类建议
+  $('#pfGame').addEventListener('input', renderPriceManage);
+
+  // 价格条目编辑 Modal
+  $('#peSave').addEventListener('click', savePriceEdit);
+  $('#peDelete').addEventListener('click', deletePriceEdit);
+  $('#peCancel').addEventListener('click', closePriceEditModal);
+  $('#peGame').addEventListener('input', refreshPeCatList);
+  $('#priceEditModal').addEventListener('click', function(e) { if (e.target === this) closePriceEditModal(); });
 
   // Lightbox
   $('#lightbox').addEventListener('click', () => $('#lightbox').classList.remove('show'));

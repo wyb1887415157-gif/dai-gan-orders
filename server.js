@@ -120,7 +120,9 @@ async function createMySQLBackend() {
       id VARCHAR(32) PRIMARY KEY,
       game VARCHAR(100) NOT NULL DEFAULT '',
       name VARCHAR(255) NOT NULL,
+      category VARCHAR(100) NOT NULL DEFAULT '',
       price DECIMAL(10,2) NOT NULL DEFAULT 0,
+      is_deleted TINYINT(1) NOT NULL DEFAULT 0,
       created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
@@ -132,6 +134,22 @@ async function createMySQLBackend() {
       created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+
+  // 迁移：老库的 price_list 补 category / is_deleted 字段
+  try {
+    const [cols] = await pool.execute(
+      "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'price_list'"
+    );
+    const has = (c) => cols.some((r) => r.COLUMN_NAME === c);
+    if (!has("category")) {
+      await pool.execute("ALTER TABLE price_list ADD COLUMN category VARCHAR(100) NOT NULL DEFAULT ''");
+    }
+    if (!has("is_deleted")) {
+      await pool.execute("ALTER TABLE price_list ADD COLUMN is_deleted TINYINT(1) NOT NULL DEFAULT 0");
+    }
+  } catch (e) {
+    console.error("price_list 迁移失败:", e.message);
+  }
 
   return {
     type: "MySQL",
@@ -166,7 +184,9 @@ function createSQLiteBackend() {
       id TEXT PRIMARY KEY,
       game TEXT NOT NULL DEFAULT '',
       name TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT '',
       price REAL NOT NULL DEFAULT 0,
+      is_deleted INTEGER NOT NULL DEFAULT 0,
       created TEXT NOT NULL DEFAULT (datetime('now','localtime'))
     )
   `);
@@ -178,6 +198,15 @@ function createSQLiteBackend() {
       created TEXT NOT NULL DEFAULT (datetime('now','localtime'))
     )
   `);
+
+  // 迁移：老库的 price_list 补 category / is_deleted 字段
+  const pCols = sqlite.prepare("PRAGMA table_info(price_list)").all();
+  if (!pCols.some((c) => c.name === "category")) {
+    sqlite.exec("ALTER TABLE price_list ADD COLUMN category TEXT NOT NULL DEFAULT ''");
+  }
+  if (!pCols.some((c) => c.name === "is_deleted")) {
+    sqlite.exec("ALTER TABLE price_list ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0");
+  }
 
   function doExec(sql, params = []) {
     const trimmed = sql.trim().toUpperCase();
@@ -414,7 +443,7 @@ app.delete("/api/price-images/:id", adminAuth, async (req, res) => {
 // ==================== 文字价格表 ====================
 app.get("/api/price-list", async (req, res) => {
   try {
-    const [rows] = await db.execute("SELECT id, game, name, price FROM price_list");
+    const [rows] = await db.execute("SELECT id, game, name, category, price, is_deleted FROM price_list");
     rows.sort((a, b) => {
       const g = String(a.game || '').localeCompare(String(b.game || ''));
       if (g !== 0) return g;
@@ -429,17 +458,26 @@ app.get("/api/price-list", async (req, res) => {
 
 app.post("/api/price-list", adminAuth, async (req, res) => {
   try {
-    const { game, name, price } = req.body;
+    const { game, name, price, category, tombstone } = req.body;
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return res.status(400).json({ error: "项目名称不能为空" });
+    }
+    const id = generateId();
+    if (tombstone) {
+      // 墓碑记录：软删除"默认价格条目"（无 DB id 的条目）时插入，
+      // 前端合并逻辑据此隐藏同名默认条目
+      await db.execute(
+        "INSERT INTO price_list (id, game, name, category, price, is_deleted) VALUES (?, ?, ?, '', 0, 1)",
+        [id, sanitize(game), sanitize(name)]
+      );
+      return res.json({ ok: true, id });
     }
     if (typeof price !== "number" || price <= 0) {
       return res.status(400).json({ error: "价格必须大于 0" });
     }
-    const id = generateId();
     await db.execute(
-      "INSERT INTO price_list (id, game, name, price) VALUES (?, ?, ?, ?)",
-      [id, sanitize(game), sanitize(name), price]
+      "INSERT INTO price_list (id, game, name, category, price) VALUES (?, ?, ?, ?, ?)",
+      [id, sanitize(game), sanitize(name), sanitize(category), price]
     );
     res.json({ ok: true, id });
   } catch (e) {
@@ -450,13 +488,13 @@ app.post("/api/price-list", adminAuth, async (req, res) => {
 
 app.put("/api/price-list/:id", adminAuth, async (req, res) => {
   try {
-    const { game, name, price } = req.body;
+    const { game, name, price, category } = req.body;
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return res.status(400).json({ error: "项目名称不能为空" });
     }
     const [result] = await db.execute(
-      "UPDATE price_list SET game = ?, name = ?, price = ? WHERE id = ?",
-      [sanitize(game), sanitize(name), price || 0, req.params.id]
+      "UPDATE price_list SET game = ?, name = ?, category = ?, price = ? WHERE id = ?",
+      [sanitize(game), sanitize(name), sanitize(category), price || 0, req.params.id]
     );
     if (result.affectedRows === 0) return res.status(404).json({ error: "项目不存在" });
     res.json({ ok: true });
@@ -468,7 +506,8 @@ app.put("/api/price-list/:id", adminAuth, async (req, res) => {
 
 app.delete("/api/price-list/:id", adminAuth, async (req, res) => {
   try {
-    await db.execute("DELETE FROM price_list WHERE id = ?", [req.params.id]);
+    // 软删除：记录保留（is_deleted=1），同时挡住同名默认条目
+    await db.execute("UPDATE price_list SET is_deleted = 1 WHERE id = ?", [req.params.id]);
     res.json({ ok: true });
   } catch (e) {
     console.error("删除价格项目失败:", e.message);
