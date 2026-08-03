@@ -182,21 +182,21 @@ body.has-bg::before {
 .game-tabs {
   display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; border-bottom: 1px solid var(--card-border); margin-bottom: 6px;
 }
-.game-tab {
+.game-tab, .pm-game-tab {
   padding: 5px 14px; border-radius: 16px; border: 1.5px solid var(--card-border); background: #fff;
   font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s; color: var(--text);
 }
-.game-tab:hover { border-color: var(--primary-light); background: #f8f4ff; }
-.game-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.game-tab:hover, .pm-game-tab:hover { border-color: var(--primary-light); background: #f8f4ff; }
+.game-tab.active, .pm-game-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 .category-tabs {
   display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 0 8px 0; margin-bottom: 4px;
 }
-.cat-tab {
+.cat-tab, .pm-cat-tab {
   padding: 3px 10px; border-radius: 12px; border: 1px solid #e8e0f0; background: #faf8fc;
   font-size: 0.75rem; cursor: pointer; transition: all 0.15s; color: var(--text-muted);
 }
-.cat-tab:hover { color: var(--primary-dark); border-color: var(--primary-lighter); }
-.cat-tab.active { background: var(--primary-lighter); color: var(--primary-dark); border-color: var(--primary-light); font-weight: 600; }
+.cat-tab:hover, .pm-cat-tab:hover { color: var(--primary-dark); border-color: var(--primary-lighter); }
+.cat-tab.active, .pm-cat-tab.active { background: var(--primary-lighter); color: var(--primary-dark); border-color: var(--primary-light); font-weight: 600; }
 
 /* ===== Inline form ===== */
 .inline-form {
@@ -511,11 +511,9 @@ tbody tr:hover { background: #f8fcff; }
 
   <!-- ==================== Panel 2: 价格表管理 ==================== -->
   <div class="panel" id="panel-pricelist">
-    <!-- 统一游戏筛选：图片价格表和文字价格表共用 -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
-      <label style="font-weight:600;color:var(--primary-dark);font-size:0.9rem;">🎮 筛选游戏</label>
-      <select id="pmGameFilter" style="padding:5px 10px;border:1px solid var(--card-border);border-radius:8px;font-size:0.85rem;background:#fff;" title="按游戏筛选"></select>
-      <span style="font-size:0.75rem;color:var(--text-muted);">未指定游戏的通用图片始终显示</span>
+    <!-- 游戏筛选标签（图片价格表和文字价格表共用，仅管理员） -->
+    <div class="game-tabs" id="pmGameTabs" style="margin-bottom:10px;">
+      <!-- 动态生成：全部游戏 + 各游戏 -->
     </div>
 
     <div class="card">
@@ -536,6 +534,7 @@ tbody tr:hover { background: #f8fcff; }
 
     <div class="card">
       <div class="card-header">📋 文字价格表 — 逐条录入</div>
+      <div class="category-tabs" id="pmCatTabs" style="display:none;"></div>
       <div class="inline-form" id="priceForm" style="display:none;">
         <div class="field">
           <label>🎮 游戏</label>
@@ -2275,26 +2274,44 @@ tbody tr:hover { background: #f8fcff; }
   }
 
   // ==================== 价格管理页 ====================
-  let pmGameFilter = ''; // 管理面板当前筛选的游戏
+  let pmGameFilter = ''; // 管理面板当前筛选的游戏（'' = 全部游戏）
+  let pmCatFilter = '';  // 管理面板当前筛选的分类（'' = 全部分类）
 
   function renderPriceManage() {
     const showDeleteImg = !apiMode || isAdmin();
     renderPriceImgGallery($('#priceImgGrid'), showDeleteImg, pmGameFilter);
     const showActions = !apiMode || isAdmin();
 
-    // 游戏筛选下拉 + 上传游戏选择：仅管理员可用
+    // 游戏筛选标签 + 上传游戏选择：仅管理员可用
     const adminOnly = (!apiMode || isAdmin()) ? '' : 'none';
-    $('#pmGameFilter').style.display = adminOnly;
+    $('#pmGameTabs').style.display = adminOnly;
     $('#priceImgGame').style.display = adminOnly;
 
-    // 游戏筛选下拉：默认数据 + DB 价格 + 图片价格 出现的游戏，保序去重
-    const games = [];
+    // 游戏标签：固定 6 款 + 数据中出现的额外游戏，保序去重
+    const games = ['原神', '异环', '终末地', '绝区零', '鸣潮', '崩铁'];
     [...ALL_DEFAULT_PRICES, ...priceList, ...priceImgs].forEach(p => {
       if (p.game && !games.includes(p.game)) games.push(p.game);
     });
-    $('#pmGameFilter').innerHTML = '<option value="">🎮 全部游戏</option>' +
-      games.map(g => `<option value="${escAttr(g)}"${g === pmGameFilter ? ' selected' : ''}>${escHtml(g)}</option>`).join('');
-    if (pmGameFilter && !games.includes(pmGameFilter)) pmGameFilter = '';
+    $('#pmGameTabs').innerHTML = `<button class="pm-game-tab${pmGameFilter === '' ? ' active' : ''}" data-pmgame="">🌐 全部游戏</button>` +
+      games.map(g => `<button class="pm-game-tab${g === pmGameFilter ? ' active' : ''}" data-pmgame="${escAttr(g)}">🎮 ${escHtml(g)}</button>`).join('');
+    if (pmGameFilter && !games.includes(pmGameFilter)) { pmGameFilter = ''; pmCatFilter = ''; }
+
+    // 分类标签：当前游戏下已有分类（默认数据 + DB 有效条目，保序去重），同客户下单面板
+    const cats = [];
+    [...ALL_DEFAULT_PRICES, ...priceList].forEach(p => {
+      if (p.game === pmGameFilter && p.category && !cats.includes(p.category)) cats.push(p.category);
+    });
+    const pmCatTabs = $('#pmCatTabs');
+    if (pmGameFilter && cats.length) {
+      if (pmCatFilter && !cats.includes(pmCatFilter)) pmCatFilter = '';
+      pmCatTabs.style.display = adminOnly ? '' : 'none';
+      pmCatTabs.innerHTML = `<button class="pm-cat-tab${pmCatFilter === '' ? ' active' : ''}" data-pmcat="">全部</button>` +
+        cats.map(c => `<button class="pm-cat-tab${pmCatFilter === c ? ' active' : ''}" data-pmcat="${escAttr(c)}">${escHtml(c)}</button>`).join('');
+    } else {
+      pmCatTabs.style.display = 'none';
+      pmCatTabs.innerHTML = '';
+      pmCatFilter = '';
+    }
 
     // 分类建议（当前表单游戏下已有分类）
     const pfGameVal = $('#pfGame').value.trim();
@@ -2304,7 +2321,12 @@ tbody tr:hover { background: #f8fcff; }
     });
     $('#pfCatList').innerHTML = pfCats.map(c => `<option value="${escAttr(c)}">`).join('');
 
-    const list = priceList.filter(p => !p.is_deleted && (!pmGameFilter || p.game === pmGameFilter));
+    // 文字价格表：按游戏 + 分类筛选
+    const list = priceList.filter(p =>
+      !p.is_deleted &&
+      (!pmGameFilter || p.game === pmGameFilter) &&
+      (!pmCatFilter || (p.category || '其他') === pmCatFilter)
+    );
     renderPriceGrid($('#priceGridManage'), list, showActions);
     if (apiMode && !isAdmin()) {
       $('#priceForm').style.display = 'none';
@@ -2773,8 +2795,21 @@ tbody tr:hover { background: #f8fcff; }
   // 客户面板：新增价格项目（管理员）
   $('#customerAddPriceBtn').addEventListener('click', () => openPriceEditModal(null, customerGame));
 
-  // 价格表页面：按游戏筛选
-  $('#pmGameFilter').addEventListener('change', (e) => { pmGameFilter = e.target.value; renderPriceManage(); });
+  // 价格表页面：游戏标签筛选（切换游戏时重置分类）
+  $('#pmGameTabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.pm-game-tab');
+    if (!btn) return;
+    pmGameFilter = btn.dataset.pmgame || '';
+    pmCatFilter = '';
+    renderPriceManage();
+  });
+  // 价格表页面：分类标签筛选
+  $('#pmCatTabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.pm-cat-tab');
+    if (!btn) return;
+    pmCatFilter = btn.dataset.pmcat || '';
+    renderPriceManage();
+  });
   // 表单游戏变化时刷新分类建议
   $('#pfGame').addEventListener('input', renderPriceManage);
 
