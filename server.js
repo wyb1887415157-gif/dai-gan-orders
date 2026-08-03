@@ -131,11 +131,12 @@ async function createMySQLBackend() {
       id VARCHAR(32) PRIMARY KEY,
       data_url MEDIUMTEXT NOT NULL,
       name VARCHAR(100) NOT NULL DEFAULT '价格表',
+      game VARCHAR(100) NOT NULL DEFAULT '',
       created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
 
-  // 迁移：老库的 price_list 补 category / is_deleted 字段
+  // 迁移：老库补字段（price_list: category/is_deleted；price_images: game）
   try {
     const [cols] = await pool.execute(
       "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'price_list'"
@@ -149,6 +150,16 @@ async function createMySQLBackend() {
     }
   } catch (e) {
     console.error("price_list 迁移失败:", e.message);
+  }
+  try {
+    const [icols] = await pool.execute(
+      "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'price_images'"
+    );
+    if (!icols.some((r) => r.COLUMN_NAME === "game")) {
+      await pool.execute("ALTER TABLE price_images ADD COLUMN game VARCHAR(100) NOT NULL DEFAULT ''");
+    }
+  } catch (e) {
+    console.error("price_images 迁移失败:", e.message);
   }
 
   return {
@@ -195,17 +206,22 @@ function createSQLiteBackend() {
       id TEXT PRIMARY KEY,
       data_url TEXT NOT NULL,
       name TEXT NOT NULL DEFAULT '价格表',
+      game TEXT NOT NULL DEFAULT '',
       created TEXT NOT NULL DEFAULT (datetime('now','localtime'))
     )
   `);
 
-  // 迁移：老库的 price_list 补 category / is_deleted 字段
+  // 迁移：老库补字段（price_list: category/is_deleted；price_images: game）
   const pCols = sqlite.prepare("PRAGMA table_info(price_list)").all();
   if (!pCols.some((c) => c.name === "category")) {
     sqlite.exec("ALTER TABLE price_list ADD COLUMN category TEXT NOT NULL DEFAULT ''");
   }
   if (!pCols.some((c) => c.name === "is_deleted")) {
     sqlite.exec("ALTER TABLE price_list ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0");
+  }
+  const iCols = sqlite.prepare("PRAGMA table_info(price_images)").all();
+  if (!iCols.some((c) => c.name === "game")) {
+    sqlite.exec("ALTER TABLE price_images ADD COLUMN game TEXT NOT NULL DEFAULT ''");
   }
 
   function doExec(sql, params = []) {
@@ -385,10 +401,10 @@ app.get("/api/health", (req, res) => {
 app.get("/api/price-images", async (req, res) => {
   try {
     // 去掉 ORDER BY，避免大图片排序撑爆 SQLPub 免费版 sort buffer
-    const [rows] = await db.execute("SELECT id, data_url, name, created FROM price_images");
+    const [rows] = await db.execute("SELECT id, data_url, name, game, created FROM price_images");
     rows.sort((a, b) => String(b.created || '').localeCompare(String(a.created || '')));
     // 只返回 dataUrl，不重复返回 data_url（减少响应体积）
-    const result = rows.map(r => ({ id: r.id, dataUrl: r.data_url, name: r.name, created: r.created }));
+    const result = rows.map(r => ({ id: r.id, dataUrl: r.data_url, name: r.name, game: r.game || '', created: r.created }));
     const totalSize = JSON.stringify(result).length;
     console.log(`📸 返回 ${result.length} 张价格图片，响应大小 ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
     res.json(result);
@@ -400,7 +416,7 @@ app.get("/api/price-images", async (req, res) => {
 
 app.post("/api/price-images", adminAuth, async (req, res) => {
   try {
-    const { dataUrl, name } = req.body;
+    const { dataUrl, name, game } = req.body;
     if (!dataUrl || typeof dataUrl !== "string") {
       return res.status(400).json({ error: "请上传有效的图片数据" });
     }
@@ -408,15 +424,15 @@ app.post("/api/price-images", adminAuth, async (req, res) => {
       return res.status(400).json({ error: "图片格式无效，仅支持 data:image/ 格式" });
     }
     const sizeMB = (dataUrl.length / 1024 / 1024).toFixed(2);
-    console.log(`📤 收到价格图片上传: name="${name}", base64 大小 ${sizeMB} MB`);
+    console.log(`📤 收到价格图片上传: name="${name}", game="${game}", base64 大小 ${sizeMB} MB`);
     // 手机截图 base64 通常 5-15MB，放宽到 15MB
     if (dataUrl.length > 15 * 1024 * 1024) {
       return res.status(400).json({ error: `图片太大（${sizeMB} MB，最大 15 MB），请压缩后再上传` });
     }
     const id = generateId();
     await db.execute(
-      "INSERT INTO price_images (id, data_url, name) VALUES (?, ?, ?)",
-      [id, dataUrl, sanitize(name) || "价格表"]
+      "INSERT INTO price_images (id, data_url, name, game) VALUES (?, ?, ?, ?)",
+      [id, dataUrl, sanitize(name) || "价格表", sanitize(game)]
     );
     console.log(`✅ 价格图片已入库: id=${id}, size=${sizeMB} MB`);
     res.json({ ok: true, id });

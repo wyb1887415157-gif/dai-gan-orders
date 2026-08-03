@@ -511,8 +511,20 @@ tbody tr:hover { background: #f8fcff; }
 
   <!-- ==================== Panel 2: 价格表管理 ==================== -->
   <div class="panel" id="panel-pricelist">
+    <!-- 统一游戏筛选：图片价格表和文字价格表共用 -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+      <label style="font-weight:600;color:var(--primary-dark);font-size:0.9rem;">🎮 筛选游戏</label>
+      <select id="pmGameFilter" style="padding:5px 10px;border:1px solid var(--card-border);border-radius:8px;font-size:0.85rem;background:#fff;" title="按游戏筛选"></select>
+      <span style="font-size:0.75rem;color:var(--text-muted);">未指定游戏的通用图片始终显示</span>
+    </div>
+
     <div class="card">
-      <div class="card-header">🖼️ 图片价格表 — 上传截图</div>
+      <div class="card-header">🖼️ 图片价格表 — 上传截图
+        <select id="priceImgGame" style="margin-left:12px;padding:3px 8px;border:1px solid var(--card-border);border-radius:8px;font-size:0.85rem;" title="上传时选择所属游戏">
+          <option value="">未指定（通用）</option>
+          <option>原神</option><option>异环</option><option>终末地</option><option>绝区零</option><option>鸣潮</option><option>崩铁</option>
+        </select>
+      </div>
       <div class="dropzone-big" id="priceImgDropzone">
         <p>📁 拖拽价格表图片到此处 或 点击上传<br><small style="color:var(--text-muted);">支持多张，点击图片可放大查看 <span id="priceImgAdminHint" style="display:none;">（需要管理员权限）</span></small></p>
       </div>
@@ -523,9 +535,7 @@ tbody tr:hover { background: #f8fcff; }
     </div>
 
     <div class="card">
-      <div class="card-header">📋 文字价格表 — 逐条录入
-        <select id="pmGameFilter" style="margin-left:12px;padding:3px 8px;border:1px solid var(--card-border);border-radius:8px;font-size:0.85rem;" title="按游戏筛选"></select>
-      </div>
+      <div class="card-header">📋 文字价格表 — 逐条录入</div>
       <div class="inline-form" id="priceForm" style="display:none;">
         <div class="field">
           <label>🎮 游戏</label>
@@ -1653,11 +1663,11 @@ tbody tr:hover { background: #f8fcff; }
   }
 
   // ==================== 价格表操作 ====================
-  async function apiAddPriceImg(dataUrl, name) {
+  async function apiAddPriceImg(dataUrl, name, game) {
     if (apiMode) {
-      return await apiFetch('/api/price-images', { method: 'POST', body: JSON.stringify({ dataUrl, name }) });
+      return await apiFetch('/api/price-images', { method: 'POST', body: JSON.stringify({ dataUrl, name, game: game || '' }) });
     } else {
-      priceImgs.push({ id: genId(), dataUrl, name: name || '价格表' });
+      priceImgs.push({ id: genId(), dataUrl, name: name || '价格表', game: game || '' });
       saveLocal();
       return { ok: true };
     }
@@ -1938,16 +1948,20 @@ tbody tr:hover { background: #f8fcff; }
     toast('已删除');
   };
 
-  function renderPriceImgGallery(container, showDelete) {
-    if (!priceImgs.length) {
-      container.innerHTML = '<div class="empty-state"><span class="empty-icon">🖼️</span>还没有上传价格表图片</div>';
+  function renderPriceImgGallery(container, showDelete, filterGame) {
+    // 按游戏筛选：指定游戏的图片只在自己游戏 + 全部 下显示；未指定（通用）始终显示
+    const list = filterGame
+      ? priceImgs.filter(i => !i.game || i.game === filterGame)
+      : priceImgs;
+    if (!list.length) {
+      container.innerHTML = `<div class="empty-state"><span class="empty-icon">🖼️</span>${priceImgs.length ? '该游戏暂无价格表图片' : '还没有上传价格表图片'}</div>`;
       return;
     }
-    container.innerHTML = priceImgs.map(img => `
+    container.innerHTML = list.map(img => `
       <div class="price-img-card" data-lightbox="${escAttr(img.dataUrl || img.data_url || '')}">
         <img src="${escAttr(img.dataUrl || img.data_url || '')}" alt="价格表" loading="lazy">
         <div class="img-label">
-          <span>📄 ${escHtml(img.name)}</span>
+          <span>📄 ${escHtml(img.name)}${img.game ? ` <small style="opacity:0.7;">🎮 ${escHtml(img.game)}</small>` : ''}</span>
           ${showDelete ? `<button onclick="event.stopPropagation();window._deletePriceImg('${img.id}')" title="删除">🗑️</button>` : ''}
         </div>
       </div>
@@ -2265,15 +2279,15 @@ tbody tr:hover { background: #f8fcff; }
 
   function renderPriceManage() {
     const showDeleteImg = !apiMode || isAdmin();
-    renderPriceImgGallery($('#priceImgGrid'), showDeleteImg);
+    renderPriceImgGallery($('#priceImgGrid'), showDeleteImg, pmGameFilter);
     const showActions = !apiMode || isAdmin();
 
     // 游戏筛选下拉：仅管理员可用
     $('#pmGameFilter').style.display = (!apiMode || isAdmin()) ? '' : 'none';
 
-    // 游戏筛选下拉：默认数据 + DB 出现的游戏，保序去重
+    // 游戏筛选下拉：默认数据 + DB 价格 + 图片价格 出现的游戏，保序去重
     const games = [];
-    [...ALL_DEFAULT_PRICES, ...priceList].forEach(p => {
+    [...ALL_DEFAULT_PRICES, ...priceList, ...priceImgs].forEach(p => {
       if (p.game && !games.includes(p.game)) games.push(p.game);
     });
     $('#pmGameFilter').innerHTML = '<option value="">🎮 全部游戏</option>' +
@@ -2337,13 +2351,14 @@ tbody tr:hover { background: #f8fcff; }
   }
 
   function renderCustomerOrder() {
-    // 价格图片
+    // 价格图片（跟随当前游戏标签：通用图 + 当前游戏的图）
     const imgContainer = $('#orderPriceImgs');
-    if (priceImgs.length) {
+    const imgs = priceImgs.filter(i => !i.game || i.game === customerGame);
+    if (imgs.length) {
       imgContainer.innerHTML = '<div class="card"><div class="card-header">🖼️ 图片价格表（点击放大）</div><div class="price-img-grid">' +
-        priceImgs.map(img => `
+        imgs.map(img => `
           <div class="price-img-card" data-lightbox="${escAttr(img.dataUrl || img.data_url || '')}">
-            <img src="${escAttr(img.dataUrl || img.data_url || '')}" alt="价格表" loading="lazy"><div class="img-label"><span>📄 ${escHtml(img.name)}</span></div>
+            <img src="${escAttr(img.dataUrl || img.data_url || '')}" alt="价格表" loading="lazy"><div class="img-label"><span>📄 ${escHtml(img.name)}${img.game ? ` <small style="opacity:0.7;">🎮 ${escHtml(img.game)}</small>` : ''}</span></div>
           </div>
         `).join('') + '</div></div>';
       // 事件委托：避免 base64 撑爆 onclick 属性
@@ -2563,7 +2578,7 @@ tbody tr:hover { background: #f8fcff; }
           toast('正在导入...请稍候');
           let count = 0;
           for (const img of (data.priceImgs || [])) {
-            try { await apiAddPriceImg(img.dataUrl || img.data_url, img.name); count++; } catch(e) {}
+            try { await apiAddPriceImg(img.dataUrl || img.data_url, img.name, img.game); count++; } catch(e) {}
           }
           for (const item of (data.priceList || [])) {
             try { await apiAddPriceItem(item.game, item.name, item.price, item.category); count++; } catch(e) {}
@@ -2639,12 +2654,13 @@ tbody tr:hover { background: #f8fcff; }
     const files = Array.from(e.target.files);
     if (!files.length) return;
     let ok = 0, fail = 0;
+    const imgGame = $('#priceImgGame').value;
     for (const f of files) {
       if (!f.type.startsWith('image/')) continue;
       try {
         const b64 = await file2b64(f);
         toast(`正在上传 ${f.name}（${(b64.length/1024/1024).toFixed(1)} MB）...`);
-        await apiAddPriceImg(b64, f.name || '价格表');
+        await apiAddPriceImg(b64, f.name || '价格表', imgGame);
         ok++;
       } catch (err) {
         fail++;
@@ -2668,12 +2684,13 @@ tbody tr:hover { background: #f8fcff; }
     const files = Array.from(e.dataTransfer.files);
     if (!files.length) return;
     let ok = 0, fail = 0;
+    const imgGame = $('#priceImgGame').value;
     for (const f of files) {
       if (!f.type.startsWith('image/')) continue;
       try {
         const b64 = await file2b64(f);
         toast(`正在上传 ${f.name}（${(b64.length/1024/1024).toFixed(1)} MB）...`);
-        await apiAddPriceImg(b64, f.name || '价格表');
+        await apiAddPriceImg(b64, f.name || '价格表', imgGame);
         ok++;
       } catch (err) {
         fail++;
