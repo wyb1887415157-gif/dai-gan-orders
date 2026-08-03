@@ -2282,8 +2282,10 @@ tbody tr:hover { background: #f8fcff; }
     renderPriceImgGallery($('#priceImgGrid'), showDeleteImg, pmGameFilter);
     const showActions = !apiMode || isAdmin();
 
-    // 游戏筛选下拉：仅管理员可用
-    $('#pmGameFilter').style.display = (!apiMode || isAdmin()) ? '' : 'none';
+    // 游戏筛选下拉 + 上传游戏选择：仅管理员可用
+    const adminOnly = (!apiMode || isAdmin()) ? '' : 'none';
+    $('#pmGameFilter').style.display = adminOnly;
+    $('#priceImgGame').style.display = adminOnly;
 
     // 游戏筛选下拉：默认数据 + DB 价格 + 图片价格 出现的游戏，保序去重
     const games = [];
