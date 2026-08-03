@@ -2282,10 +2282,10 @@ tbody tr:hover { background: #f8fcff; }
     renderPriceImgGallery($('#priceImgGrid'), showDeleteImg, pmGameFilter);
     const showActions = !apiMode || isAdmin();
 
-    // 游戏筛选标签 + 上传游戏选择：仅管理员可用
-    const adminOnly = (!apiMode || isAdmin()) ? '' : 'none';
-    $('#pmGameTabs').style.display = adminOnly;
-    $('#priceImgGame').style.display = adminOnly;
+    // 游戏筛选标签：所有人可见（普通客户也能按游戏查看价格表）
+    $('#pmGameTabs').style.display = '';
+    // 上传游戏选择：仅管理员可用
+    $('#priceImgGame').style.display = (!apiMode || isAdmin()) ? '' : 'none';
 
     // 游戏标签：固定 6 款 + 数据中出现的额外游戏，保序去重
     const games = ['原神', '异环', '终末地', '绝区零', '鸣潮', '崩铁'];
@@ -2304,7 +2304,7 @@ tbody tr:hover { background: #f8fcff; }
     const pmCatTabs = $('#pmCatTabs');
     if (pmGameFilter && cats.length) {
       if (pmCatFilter && !cats.includes(pmCatFilter)) pmCatFilter = '';
-      pmCatTabs.style.display = adminOnly ? '' : 'none';
+      pmCatTabs.style.display = '';
       pmCatTabs.innerHTML = `<button class="pm-cat-tab${pmCatFilter === '' ? ' active' : ''}" data-pmcat="">全部</button>` +
         cats.map(c => `<button class="pm-cat-tab${pmCatFilter === c ? ' active' : ''}" data-pmcat="${escAttr(c)}">${escHtml(c)}</button>`).join('');
     } else {
